@@ -5,6 +5,10 @@ import util.Coordinate
 import java.io.Serializable
 
 import android.graphics.Color
+import settings.Colorful
+import settings.Geometric
+import settings.Labelled
+import settings.Sized
 
 class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
     companion object {
@@ -42,19 +46,19 @@ class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
         this.label = label
     }
 
-    fun getColor(): Int {
+    override fun getColor(): Int {
         return color
     }
 
-    fun setColor(color: Int) {
+    override fun setColor(color: Int) {
         this.color = color
     }
 
-    fun getCoordinate(): Coordinate {
+    override fun getCoordinate(): Coordinate {
         return coordinate
     }
 
-    fun setCoordinate(coordinate: Coordinate) {
+    override fun setCoordinate(coordinate: Coordinate) {
         this.coordinate = coordinate
     }
 
@@ -62,18 +66,18 @@ class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
         return id
     }
 
-    fun getLabel(): String {
+    override fun getLabel(): String {
         return label
     }
 
-    fun setLabel(label: String) {
+    override fun setLabel(label: String) {
         this.label = label
     }
 
-    fun getSize(): Float {
+    override fun getSize(): Float {
         return size
     }
-    fun setSize(size: Float) {
+    override fun setSize(size: Float) {
         this.size = size
     }
 
