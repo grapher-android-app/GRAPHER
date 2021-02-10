@@ -1,7 +1,6 @@
 package model
 
 import settings.Colorful
-import settings.EdgeStyle
 import settings.Geometric
 import util.Coordinate
 import java.io.Serializable
