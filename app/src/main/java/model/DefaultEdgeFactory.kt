@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-//TODO Implement jgrapht
+// TODO Find replacement for EdgeFactory
 
 class DefaultEdgeFactory<V> : Serializable {
 
