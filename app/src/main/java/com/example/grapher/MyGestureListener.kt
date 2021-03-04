@@ -13,7 +13,6 @@ class MyGestureListener (src: GraphActivity): GestureDetector.SimpleOnGestureLis
 
             val x = e.x
             val y = e.y
-            src.createNode(x,y)
             return true
         }
         return false
