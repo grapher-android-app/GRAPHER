@@ -1,8 +1,6 @@
 package com.example.grapher
 
 import Node
-import android.graphics.drawable.shapes.OvalShape
-import android.graphics.drawable.shapes.Shape
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -14,14 +12,16 @@ import model.DefaultVertex
 class GraphActivity : AppCompatActivity() {
     lateinit var grid_view: RelativeLayout
     lateinit var testNode: Node
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_graph)
-        grid_view = findViewById(R.id.grid_view)
+        grid_view = findViewById(R.id.workspace)
         grid_view.setOnTouchListener(MyOnTouchListener(this))
         DefaultVertex.resetCounter()
 
-        var addNodeButton = findViewById<Button>(R.id.addNodeButton)
+
+        /*var addNodeButton = findViewById<Button>(R.id.addNodeButton)
         addNodeButton.setOnClickListener{
             val text = "Hello toast!"
             val duration = Toast.LENGTH_SHORT
@@ -31,7 +31,7 @@ class GraphActivity : AppCompatActivity() {
             var button = Button(this)
             grid_view.addView(button,0)
             grid_view.refreshDrawableState()
-        }
+        }*/
     }
 
     fun createNode(x: Float, y: Float){

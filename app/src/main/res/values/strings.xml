@@ -3,4 +3,9 @@
     <string name="gimme_a_mang0">Gimme a Mang0</string>
     <string name="_10000_gecs_album">10000 gecs album</string>
     <string name="switch1">Switch</string>
+    <string name="mode">Node</string>
+
+    <string name="node">Node</string>
+    <string name="algo">algo</string>
+    <string name="shake_me">shake me</string>
 </resources>

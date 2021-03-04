@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mode">Node</string>
+    <string name="node">Node</string>
+    <string name="algo">algo</string>
+    <string name="shake_me">shake me</string>
+</resources>
