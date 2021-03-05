@@ -23,8 +23,10 @@ class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
     }
 
     /** lateinit means it's intialized in the constructor */
+    //WARNING lateinit doesn't work with coordinate as it causes errors
+    // currently need to be initialized in ALL constructors to guarantee
     private var color: Int = 0
-    private lateinit var coordinate: Coordinate
+    private var coordinate: Coordinate
     private lateinit var label: String
     private var size: Float = 0F
 
@@ -32,10 +34,12 @@ class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
     private val id: Int = CURRENT_ID++
 
     constructor (coordinate: Coordinate) {
+        this.coordinate = coordinate
         DefaultVertex(Color.rgb(0, 0, 200), coordinate, DEFAULT_SIZE)
     }
 
     constructor (color: Int, coordinate: Coordinate, size: Float) {
+        this.coordinate = coordinate
         DefaultVertex(color, coordinate, size, "")
     }
 
