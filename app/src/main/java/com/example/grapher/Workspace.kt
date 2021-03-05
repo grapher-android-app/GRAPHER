@@ -7,34 +7,32 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import org.jgrapht.Graph
 
 // Custom Layout classes need to inherit AttributeSet or else it will fail
 class Workspace(context: Context?, attrs : AttributeSet) : ConstraintLayout(context, attrs) {
-    var activity : Context? = context
-
+    private var activity : Context? = context
+    private var graphView = GraphView(activity)
 
     init {
-        Log.d("YO", "intialized")
         setOnTouchListener(MyOnTouchListener(this))
         this.setWillNotDraw(false)
+        this.addView(graphView)
     }
 
     fun createNode(x: Float, y: Float){
-        var node = Node(activity,x,y,50,50)
+        val node = Node(activity,x,y,50,50)
+        graphView.addVertex(x, y)
+        graphView.invalidate()
         this.addView(node,0)
         this.refreshDrawableState()
     }
 
-    class MyGestureListener (workspace: Workspace): GestureDetector.SimpleOnGestureListener() {
-        private val workspace = workspace
+    class MyGestureListener (private val workspace: Workspace): GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-            Log.d("HELP", "Meow")
             if (e != null){
-                var x = e.x
-                var y = e.y
+                val x = e.x
+                val y = e.y
                 workspace.createNode(x, y)
                 return true
             }
