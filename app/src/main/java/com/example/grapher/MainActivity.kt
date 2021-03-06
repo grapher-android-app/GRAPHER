@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import model.DefaultVertex
+import model.Node
 
 
 /** AppCompatActivity replaces Activity in this library */
@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener{
             startActivity(Intent(this, GraphActivity::class.java))
         }
-        DefaultVertex.resetCounter()
+        Node.resetCounter()
     }
 
 

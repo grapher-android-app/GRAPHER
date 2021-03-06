@@ -10,7 +10,7 @@ import settings.Geometric
 import settings.Labelled
 import settings.Sized
 
-class DefaultVertex (color: Int, coordinate: Coordinate, size: Float, label: String)
+class Node (color: Int, coordinate: Coordinate, size: Float, label: String)
     : Colorful, Geometric, Labelled, Sized, Serializable {
     companion object {
         private const val serialVersionUID = 1L

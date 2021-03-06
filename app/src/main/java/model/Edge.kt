@@ -5,7 +5,7 @@ import settings.Geometric
 import util.Coordinate
 import java.io.Serializable
 
-class DefaultEdge<V>(private val source: V, private val target: V) : Colorful, Geometric, Serializable{
+class Edge<V>(private val source: V, private val target: V) : Colorful, Geometric, Serializable{
     companion object {
         private const val serialVersionUID = 1L
     }
