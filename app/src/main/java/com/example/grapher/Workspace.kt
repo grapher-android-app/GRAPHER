@@ -1,6 +1,5 @@
 package com.example.grapher
 
-import Node
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -20,12 +19,13 @@ class Workspace(context: Context?, attrs : AttributeSet) : ConstraintLayout(cont
         this.addView(graphView)
     }
 
+    // TODO rework this and the listeners into GraphView perhaps?
     fun createNode(x: Float, y: Float){
-        val node = Node(activity,x,y,50,50)
         graphView.addVertex(x, y)
         graphView.invalidate()
-        this.addView(node,0)
         this.refreshDrawableState()
+
+        // TODO Remove Nodex XML Drawing
     }
 
     class MyGestureListener (private val workspace: Workspace): GestureDetector.SimpleOnGestureListener() {
