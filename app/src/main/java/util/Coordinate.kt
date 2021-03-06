@@ -6,7 +6,7 @@ import kotlin.math.atan2
 import kotlin.math.round
 import kotlin.math.sqrt
 
-class Coordinate : Cloneable, Serializable {
+class Coordinate(private val x: Float, private val y: Float) : Cloneable, Serializable {
 
     //* All static variables in the class */
     companion object {
@@ -17,21 +17,9 @@ class Coordinate : Cloneable, Serializable {
         val UNIT_Y = Coordinate(0F, 1F)
     }
 
-    private val x: Float
-    private val y: Float
+    constructor (c : Coordinate) : this(c.getX(), c.getY())
 
-    constructor (c: Coordinate) {
-        x = c.x
-        y = c.y
-    }
-
-    //maybe change to a primary constructor + init block
-    constructor (x: Float, y: Float) {
-        this.x = x
-        this.y = y
-    }
-
-    override protected fun clone(): Coordinate {
+    override fun clone(): Coordinate {
         return Coordinate(this)
     }
 
