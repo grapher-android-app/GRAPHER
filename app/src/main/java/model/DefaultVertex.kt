@@ -10,11 +10,12 @@ import settings.Geometric
 import settings.Labelled
 import settings.Sized
 
-class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
+class DefaultVertex (color: Int, coordinate: Coordinate, size: Float, label: String)
+    : Colorful, Geometric, Labelled, Sized, Serializable {
     companion object {
         private const val serialVersionUID = 1L
         private var CURRENT_ID = 1
-        val DEFAULT_SIZE = 15F
+        const val DEFAULT_SIZE = 15F
 
         //TODO find replacement for synchronized
         fun resetCounter() {
@@ -23,32 +24,26 @@ class DefaultVertex : Colorful, Geometric, Labelled, Sized, Serializable {
     }
 
     /** lateinit means it's intialized in the constructor */
-    //WARNING lateinit doesn't work with coordinate as it causes errors
-    // currently need to be initialized in ALL constructors to guarantee
-    private var color: Int = 0
+    private var color: Int
     private var coordinate: Coordinate
-    private lateinit var label: String
-    private var size: Float = 0F
+    private var label: String
+    private var size: Float
+
+    init {
+        this.color = color
+        this.coordinate = coordinate
+        this.label = label
+        this.size = size
+    }
 
     //changed from being done in constructor, does not seem to be a difference
     private val id: Int = CURRENT_ID++
 
-    constructor (coordinate: Coordinate) {
-        this.coordinate = coordinate
-        DefaultVertex(Color.rgb(0, 0, 200), coordinate, DEFAULT_SIZE)
-    }
+    constructor (coordinate: Coordinate) :
+            this(Color.rgb(0, 0, 200), coordinate, DEFAULT_SIZE)
 
-    constructor (color: Int, coordinate: Coordinate, size: Float) {
-        this.coordinate = coordinate
-        DefaultVertex(color, coordinate, size, "")
-    }
-
-    constructor (color: Int, coordinate: Coordinate, size: Float, label: String) {
-        this.color = color
-        this.coordinate = coordinate
-        this.size = size
-        this.label = label
-    }
+    constructor (color: Int, coordinate: Coordinate, size: Float) :
+                this(color, coordinate, size, "")
 
     override fun getColor(): Int {
         return color
