@@ -37,7 +37,10 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     init {
         gestureListener = MyGestureListener(this)
         gestureDetector = GestureDetector(getContext(),gestureListener,handler)
+        gestureDetector.setIsLongpressEnabled(true)
         graph.addVertex(origo)
+        val testNode = Node(Coordinate(553F,813F))
+        graph.addVertex(testNode)
         edgePaint.color = resources.getColor(R.color.purple_200, null)
         edgePaint.strokeWidth = 8f
         vertexPaint.color = resources.getColor(R.color.teal_700, null)
@@ -69,14 +72,17 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     }
 
     fun addNode(x : Float, y : Float) {
-        val vertex = Node(Coordinate(x, y))
-        graph.addVertex(vertex)
-        addEdgeToPrev(vertex)
-        prevVertex = vertex
+        addNode(Coordinate(x,y))
     }
 
     fun addNode(coordinate: Coordinate) {
-        graph.addVertex(Node(coordinate))
+        val vertex = Node(coordinate)
+        graph.addVertex(vertex)
+        invalidate()
+        refreshDrawableState()
+        Log.d("MAKE NODE","created node")
+        //addEdgeToPrev(vertex)
+        //prevVertex = vertex
     }
 
     /**
@@ -130,7 +136,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
             Log.d("GESTURE LISTENER","On SingleTapUp")
             if (e != null){
-
+                Log.d("GESTURE LISTENER","On SingleTapUp2")
                 val coord = Coordinate(e.x,e.y)
                 graphView.addNode(coord);
                 return true
@@ -141,7 +147,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             Log.d("GESTURE LISTENER","onSingleTapConfirmed")
             if (e != null){
-
+                Log.d("GESTURE LISTENER","On SingleTapConfirmed2")
                 val coord = Coordinate(e.x,e.y)
                 graphView.addNode(coord);
                 return true
@@ -156,7 +162,12 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
         override fun onLongPress(e: MotionEvent?) {
             Log.d("GESTURE LISTENER","onLongPress")
-            super.onLongPress(e)
+            if (e!=null) {
+                Log.d("GESTURE LISTENER","onLongPress2")
+                val coord = Coordinate(e.x, e.y)
+                Log.d("coord",""+e.x+", "+e.y)
+                graphView.addNode(coord);
+            }
         }
     }
 }
