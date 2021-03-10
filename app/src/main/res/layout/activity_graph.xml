@@ -13,25 +13,30 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/navbar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/navbar"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
+        android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/mode_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginStart="5dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="2dp"
             android:fontFamily="sans-serif"
+            android:gravity="center"
             android:text="@string/node"
             android:textColor="#9817AE"
             android:textSize="24sp"
@@ -41,35 +46,43 @@
 
         <Switch
             android:id="@+id/mode_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="6dp"
             android:scaleX="1.3"
             android:scaleY="1.3"
-            android:switchMinWidth="55dp"
-            />
+            android:switchMinWidth="55dp" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:id="@+id/shake_button"
-            android:text="@string/shake_me"
-            android:layout_marginStart="15dp" />
-        <Button
-            android:layout_width="70dp"
-            android:layout_height="45dp"
-            android:id="@+id/hamburger"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@android:color/transparent"
-            android:drawableBottom="@drawable/hamburgaa"
-            app:layout_constraintBottom_toBottomOf="@id/navbar"
-            app:layout_constraintStart_toStartOf="@id/navbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:text="@string/shake_me" />
 
+        <Button
+            android:id="@+id/hamburger"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            app:icon="@drawable/hamburgaa"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
             />
+
+        <!--android:layout_width="70dp"
+        android:layout_height="45dp"
+
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/transparent"
+        android:drawableBottom="@drawable/hamburgaa"
+        app:layout_constraintBottom_toBottomOf="@id/navbar"
+        app:layout_constraintStart_toStartOf="@id/navbar"-->
+
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
