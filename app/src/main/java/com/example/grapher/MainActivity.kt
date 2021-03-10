@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var button = findViewById<Button>(R.id.bruhOst)
+        val button = findViewById<Button>(R.id.start_grapher)
 
         button.setOnClickListener{
             startActivity(Intent(this, GraphActivity::class.java))

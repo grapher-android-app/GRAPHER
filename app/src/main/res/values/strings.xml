@@ -8,4 +8,5 @@
     <string name="node">Node</string>
     <string name="algo">algo</string>
     <string name="shake_me">shake me</string>
+    <string name="start">START</string>
 </resources>
