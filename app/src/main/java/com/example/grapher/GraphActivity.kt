@@ -26,7 +26,6 @@ class GraphActivity : AppCompatActivity() {
             else{
                 findViewById<TextView>(R.id.mode_text).text = "Node"
             }
-
         }
 
     }

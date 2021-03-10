@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.Switch
 import model.Edge
 import model.DefaultSupplier
@@ -15,7 +16,7 @@ import model.Node
 import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 
-class GraphView(context : Context?, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
+class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
     // Paints can be moved to edge and vertex classes
     private val edgePaint = Paint()
@@ -31,10 +32,7 @@ class GraphView(context : Context?, attrs: AttributeSet? = null, defStyleAttr: I
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
 
-    private var nodeMode: Boolean = true
-    private lateinit var selectedNode: Node
-
-    private lateinit var modeSwitch: Switch
+    constructor(context: Context?, attrs: AttributeSet): this(context, attrs,0)
 
     init {
         gestureListener = MyGestureListener(this)
@@ -43,18 +41,12 @@ class GraphView(context : Context?, attrs: AttributeSet? = null, defStyleAttr: I
         edgePaint.color = resources.getColor(R.color.purple_200, null)
         edgePaint.strokeWidth = 8f
         vertexPaint.color = resources.getColor(R.color.teal_700, null)
-        //setModeSwitch(findViewById(R.id.mode_switch))
     }
 
-    fun setModeSwitch(switch: Switch){
-        modeSwitch = switch
-        modeSwitch.setOnClickListener{
-            Log.d("MODESWITCH","nodeMode set to "+!nodeMode)
-            nodeMode=!nodeMode
-        }
+    override fun onTouchEvent(event: MotionEvent?): Boolean{
+        Log.d("TOUCH", "TOUCH EVENT")
+        return gestureDetector.onTouchEvent(event)
     }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean = gestureDetector.onTouchEvent(event)
 
     override fun onDraw(canvas : Canvas) {
         super.onDraw(canvas)
@@ -114,14 +106,6 @@ class GraphView(context : Context?, attrs: AttributeSet? = null, defStyleAttr: I
         return null
     }
 
-    private fun selectNode(node: Node){
-        selectedNode = node
-    }
-
-    private fun selectNodeAt(coordinate: Coordinate){
-        selectNode(getNodeAtCoordinate(coordinate)!!)
-    }
-
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
             if (node.getCoordinate().subtract(coordinate).length()>=node.getSize()*node.getSize()){
@@ -144,23 +128,35 @@ class GraphView(context : Context?, attrs: AttributeSet? = null, defStyleAttr: I
 
     class MyGestureListener (private val graphView: GraphView): GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
-            Log.d("GESTURE LISTENER","clicko")
+            Log.d("GESTURE LISTENER","On SingleTapUp")
             if (e != null){
 
                 val coord = Coordinate(e.x,e.y)
-                if (graphView.nodeMode){
-                    if (!graphView.hasNode(coord)){
-                        graphView.addNode(coord)
-                    }
-                }
-                else{
-                    if (graphView.hasNode(coord)){
-                        graphView.selectNodeAt(coord)
-                    }
-                }
+                graphView.addNode(coord);
                 return true
             }
             return false
+        }
+
+        override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+            Log.d("GESTURE LISTENER","onSingleTapConfirmed")
+            if (e != null){
+
+                val coord = Coordinate(e.x,e.y)
+                graphView.addNode(coord);
+                return true
+            }
+            return false
+        }
+
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+            Log.d("GESTURE LISTENER","onSingleTapConfirmed")
+            return super.onDoubleTap(e)
+        }
+
+        override fun onLongPress(e: MotionEvent?) {
+            Log.d("GESTURE LISTENER","onLongPress")
+            super.onLongPress(e)
         }
     }
 }

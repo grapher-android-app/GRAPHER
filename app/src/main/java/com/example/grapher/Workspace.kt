@@ -8,12 +8,12 @@ import androidx.constraintlayout.widget.ConstraintLayout
 // Custom Layout classes need to inherit AttributeSet or else it will fail
 class Workspace(context: Context?, attrs : AttributeSet) : ConstraintLayout(context, attrs) {
     private var activity : Context? = context
-    private var graphView = GraphView(activity)
+//    private var graphView = GraphView(activity)
 
     init {
 //        setOnTouchListener(MyOnTouchListener(this))
         this.setWillNotDraw(false)
-        this.addView(graphView)
+//        this.addView(graphView)
     }
 
 //    fun setModeSwitch(switch: Switch){
