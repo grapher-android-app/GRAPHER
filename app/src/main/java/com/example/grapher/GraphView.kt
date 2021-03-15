@@ -37,7 +37,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     init {
         gestureListener = MyGestureListener()
         gestureDetector = GestureDetector(getContext(),gestureListener,handler)
-        gestureDetector.setIsLongpressEnabled(false)
+        gestureDetector.setIsLongpressEnabled(true)
         graph.addVertex(origo)
         val testNode = Node(Coordinate(553F,813F))
         graph.addVertex(testNode)
@@ -158,6 +158,13 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
             return super.onDoubleTap(e)
         }
 
+        /**
+         * This always returns true, because if it didn't, then longpress would always be triggered
+         */
+        override fun onDown(e: MotionEvent?): Boolean {
+            return true
+        }
+
         override fun onLongPress(e: MotionEvent?) {
             Log.d("GESTURE LISTENER","onLongPress")
             if (e!=null) {
@@ -165,16 +172,6 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
                 Log.d("coord",""+e.x+", "+e.y)
                 addNode(e.x, e.y)
             }
-        }
-
-        override fun onDown(e: MotionEvent?): Boolean {
-            Log.d("GESTURE LISTENER","onSingleTapConfirmed")
-            if (e != null){
-                Log.d("GESTURE LISTENER","On SingleTapConfirmed2")
-                addNode(e.x, e.y)
-                return true
-            }
-            return false
         }
     }
 }
