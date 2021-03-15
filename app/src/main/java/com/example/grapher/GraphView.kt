@@ -8,8 +8,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewConfiguration
-import android.widget.Switch
 import model.Edge
 import model.DefaultSupplier
 import model.Node
@@ -22,9 +20,6 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private val edgePaint = Paint()
     private val vertexPaint = Paint()
 
-    private val origo =  Node(Coordinate(0f, 0f))
-    private var prevVertex = origo
-
     private var edgeSup = DefaultSupplier<Edge<Node>>()
     private var graph : SimpleGraph<Node, Edge<Node>> =
         SimpleGraph(null, edgeSup, false)
@@ -32,23 +27,24 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
 
+    private var mode: Boolean = true
+    private var selectedNode: Node? = null
+
     constructor(context: Context?, attrs: AttributeSet): this(context, attrs,0)
 
     init {
         gestureListener = MyGestureListener()
         gestureDetector = GestureDetector(getContext(),gestureListener,handler)
         gestureDetector.setIsLongpressEnabled(true)
-        graph.addVertex(origo)
-        val testNode = Node(Coordinate(553F,813F))
-        graph.addVertex(testNode)
         edgePaint.color = resources.getColor(R.color.purple_200, null)
         edgePaint.strokeWidth = 8f
-        vertexPaint.color = resources.getColor(R.color.teal_700, null)
+        vertexPaint.color = resources.getColor(R.color.node_color_standard, null)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean{
-        Log.d("TOUCH", "TOUCH EVENT")
-        return gestureDetector.onTouchEvent(event)
+    override fun onTouchEvent(event: MotionEvent?): Boolean = gestureDetector.onTouchEvent(event)
+
+    fun changeMode(){
+        mode = !mode
     }
 
     override fun onDraw(canvas : Canvas) {
@@ -64,10 +60,22 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
             canvas.drawLine(x1, y1, x2, y2, edgePaint)
         }
-
+        if (mode){
+            vertexPaint.color = resources.getColor(R.color.node_color_standard,null)
+        } else {
+            vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected,null)
+        }
         for (v in graph.vertexSet()) {
-            canvas.drawCircle(
-                v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint)
+            if (selectedNode!=null && selectedNode==v){
+                vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected,null)
+                canvas.drawCircle(
+                        v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint)
+                vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected,null)
+            }
+            else {
+                canvas.drawCircle(
+                        v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint)
+            }
         }
     }
 
@@ -85,69 +93,92 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         //prevVertex = vertex
     }
 
-    /**
-     * Adds an edge from given vertex to the previous vertex
-     * Simply used for edge drawing testing
-     */
-    private fun addEdgeToPrev(vertex : Node) {
-        val edge = Edge(prevVertex, vertex)
-        //TODO can only add edge by creating Default edge object
-        //as supplier is not implemented correctly. Figure out to avoid workaround?
-        graph.addEdge(prevVertex, vertex, edge)
-    }
-
-    private fun addEdge(vertex : Node) {
-        val edge = Edge(prevVertex, vertex)
-        //TODO can only add edge by creating Default edge object
-        //as supplier is not implemented correctly. Figure out to avoid workaround?
-        graph.addEdge(prevVertex, vertex, edge)
-    }
-
     private fun getNodeAtCoordinate(coordinate: Coordinate): Node?{
         for (node: Node in graph.vertexSet()){
-            if (node.getCoordinate().subtract(coordinate).length()>=node.getSize()*node.getSize()){
+            if (node.getCoordinate().subtract(coordinate).length()<=node.getSize()){
                 return node
             }
         }
         return null
     }
 
+    private fun selectNode(node: Node){
+        selectedNode = node
+        invalidate()
+        refreshDrawableState()
+    }
+
+    private fun unselectNode(){
+        selectedNode = null
+        invalidate()
+        refreshDrawableState()
+    }
+
+    private fun hasSelectedNode(): Boolean = selectedNode!=null
+
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
-            if (node.getCoordinate().subtract(coordinate).length()>=node.getSize()*node.getSize()){
+            if (node.getCoordinate().subtract(coordinate).length()<=node.getSize()){
                 return true
             }
         }
         return false
     }
 
-    /**
-     * Adds an edge from given vertex to a premade vertex
-     * placed in origo. Simply used for edge drawing testing
-     */
-    private fun addEdgeOrigo(vertex : Node) {
-        val edge = Edge(origo, vertex)
-        //TODO can only add edge by creating Default edge object
-        //as supplier is not implemented correctly. Figure out to avoid workaround?
-        graph.addEdge(origo, vertex, edge)
+    private fun hasEdge(node: Node): Boolean = graph.containsEdge(selectedNode,node)
+
+    private fun addEdgeBetween(node: Node){
+        val edge = Edge(selectedNode!!, node)
+        graph.addEdge(selectedNode!!,node,edge)
+        unselectNode()
+        invalidate()
+        refreshDrawableState()
     }
 
+
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(e: MotionEvent?): Boolean {
-            Log.d("GESTURE LISTENER","On SingleTapUp")
-            if (e != null){
-                Log.d("GESTURE LISTENER","On SingleTapUp2")
-                addNode(e.x, e.y)
-                return true
-            }
-            return false
-        }
 
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-            Log.d("GESTURE LISTENER","onSingleTapConfirmed")
+
             if (e != null){
-                Log.d("GESTURE LISTENER","On SingleTapConfirmed2")
-                addNode(e.x, e.y)
+                val coordinate = Coordinate(e.x,e.y)
+                if (mode){
+                    if (!hasNode(coordinate)){
+                        Log.d("OnSingleTapConfirmed","Added Node")
+                        addNode(e.x, e.y)
+                    }
+                    else {
+                        Log.d("OnSingleTapConfirmed", "Didn't add Node")
+                    }
+                }
+                else {
+                    if (hasNode(coordinate)){
+                        Log.d("OnSingleTapConfirmed","Was Node")
+                        val node = getNodeAtCoordinate(coordinate)!!
+                        if (hasSelectedNode()){
+                            if (node==selectedNode){
+                                Log.d("OnSingleTapConfirmed","Unselected Node")
+                                unselectNode()
+                            }
+                            else{
+                                if (hasEdge(node)){
+                                    Log.d("OnSingleTapConfirmed","Didn't add Edge")
+                                }
+                                else {
+                                    addEdgeBetween(node)
+                                    Log.d("OnSingleTapConfirmed","Added Edge")
+                                }
+                            }
+                        }
+                        else {
+                            Log.d("OnSingleTapConfirmed","Selected Node")
+                            selectNode(node)
+                        }
+                    }
+                    else{
+                        Log.d("OnSingleTapConfirmed","Wasn't Node")
+                    }
+                }
                 return true
             }
             return false
@@ -158,13 +189,6 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
             return super.onDoubleTap(e)
         }
 
-        /**
-         * This always returns true, because if it didn't, then longpress would always be triggered
-         */
-        override fun onDown(e: MotionEvent?): Boolean {
-            return true
-        }
-
         override fun onLongPress(e: MotionEvent?) {
             Log.d("GESTURE LISTENER","onLongPress")
             if (e!=null) {
@@ -173,5 +197,10 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
                 addNode(e.x, e.y)
             }
         }
+
+        /**
+         * This always returns true, because if it didn't, then long press would always be triggered
+         */
+        override fun onDown(e: MotionEvent?): Boolean = true
     }
 }

@@ -20,13 +20,16 @@ class GraphActivity : AppCompatActivity() {
         Node.resetCounter()
 
         //Changes the name of the mode you are in
+        val graphView = findViewById<GraphView>(R.id.graphView)
         val switchMode = findViewById<Switch>(R.id.mode_switch)
         switchMode?.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 findViewById<TextView>(R.id.mode_text).text = "Edge"
+                graphView.changeMode()
             }
             else{
                 findViewById<TextView>(R.id.mode_text).text = "Node"
+                graphView.changeMode()
             }
         }
 
