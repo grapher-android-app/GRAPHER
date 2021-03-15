@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
+import android.view.ActionMode
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -30,6 +31,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private var mode: Boolean = true
     private var selectedNode: Node? = null
 
+    private var isScrolling = false
+
     constructor(context: Context?, attrs: AttributeSet): this(context, attrs,0)
 
     init {
@@ -41,10 +44,21 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         vertexPaint.color = resources.getColor(R.color.node_color_standard, null)
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean = gestureDetector.onTouchEvent(event)
+    override fun onTouchEvent(event: MotionEvent?): Boolean{
+        if (event!=null && event.action.equals(MotionEvent.ACTION_UP)){ //stops scrolling
+            if (isScrolling){
+                Log.d("scroll","stopped scrolling")
+                isScrolling=false
+                unselectNode()
+            }
+        }
+        return gestureDetector.onTouchEvent(event)
+    }
 
     fun changeMode(){
         mode = !mode
+        invalidate()
+        refreshDrawableState()
     }
 
     override fun onDraw(canvas : Canvas) {
@@ -88,14 +102,11 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         graph.addVertex(vertex)
         invalidate()
         refreshDrawableState()
-        Log.d("MAKE NODE","created node")
-        //addEdgeToPrev(vertex)
-        //prevVertex = vertex
     }
 
     private fun getNodeAtCoordinate(coordinate: Coordinate): Node?{
         for (node: Node in graph.vertexSet()){
-            if (node.getCoordinate().subtract(coordinate).length()<=node.getSize()){
+            if (isOnNode(coordinate,node)){
                 return node
             }
         }
@@ -116,9 +127,11 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     private fun hasSelectedNode(): Boolean = selectedNode!=null
 
+    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean = node.getCoordinate().subtract(coordinate).length()<=node.getSize()
+
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
-            if (node.getCoordinate().subtract(coordinate).length()<=node.getSize()){
+            if (isOnNode(coordinate,node)){
                 return true
             }
         }
@@ -135,6 +148,12 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         refreshDrawableState()
     }
 
+    private fun moveNode(distanceX: Float, distanceY: Float){
+        val coordinate = Coordinate(distanceX,distanceY)
+        selectedNode!!.setCoordinate(selectedNode!!.getCoordinate().subtract(coordinate))
+        invalidate()
+        refreshDrawableState()
+    }
 
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
 
@@ -185,16 +204,39 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         }
 
         override fun onDoubleTap(e: MotionEvent?): Boolean {
-            Log.d("GESTURE LISTENER","onSingleTapConfirmed")
+            Log.d("onDoubleTap","onSingleTapConfirmed")
+            if (mode){
+
+            } else{
+
+            }
             return super.onDoubleTap(e)
+        }
+
+        override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+            if (e1!=null && e2!=null){
+                if (mode) {
+                    if (isScrolling) {
+                        moveNode(distanceX, distanceY)
+                    } else {
+                        val coordinate = Coordinate(Coordinate(e1.x, e1.y))
+                        if (hasNode(coordinate)) {
+                            val node = getNodeAtCoordinate(coordinate)
+                            selectNode(node!!)
+                            moveNode(distanceX, distanceY)
+                            isScrolling = true
+                        }
+                    }
+                }
+                Log.d("OnScroll","Scroll")
+                return true
+            }
+            return false
         }
 
         override fun onLongPress(e: MotionEvent?) {
             Log.d("GESTURE LISTENER","onLongPress")
             if (e!=null) {
-                Log.d("GESTURE LISTENER","onLongPress2")
-                Log.d("coord",""+e.x+", "+e.y)
-                addNode(e.x, e.y)
             }
         }
 
