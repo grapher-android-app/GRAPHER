@@ -45,42 +45,31 @@ class Node (color: Int, coordinate: Coordinate, size: Float, label: String)
     constructor (color: Int, coordinate: Coordinate, size: Float) :
                 this(color, coordinate, size, "")
 
-    override fun getColor(): Int {
-        return color
-    }
+    override fun getColor(): Int = color
 
     override fun setColor(color: Int) {
         this.color = color
     }
 
-    override fun getCoordinate(): Coordinate {
-        return coordinate
-    }
+    override fun getCoordinate(): Coordinate = coordinate
 
     override fun setCoordinate(coordinate: Coordinate) {
         this.coordinate = coordinate
     }
 
-    fun getId(): Int {
-        return id
-    }
+    fun getId(): Int = id
 
-    override fun getLabel(): String {
-        return label
-    }
+    override fun getLabel(): String = label
 
     override fun setLabel(label: String) {
         this.label = label
     }
 
-    override fun getSize(): Float {
-        return size
-    }
+    override fun getSize(): Float = size
+
     override fun setSize(size: Float) {
         this.size = size
     }
 
-    override fun toString(): String {
-        return "dv$id"
-    }
+    override fun toString(): String = "dv$id"
 }
