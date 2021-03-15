@@ -19,7 +19,4 @@ class MainActivity : AppCompatActivity() {
         }
         Node.resetCounter()
     }
-
-
-
 }
