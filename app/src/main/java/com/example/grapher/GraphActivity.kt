@@ -49,8 +49,7 @@ class GraphActivity : AppCompatActivity() {
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.test1 -> Toast.makeText(this, "lol", Toast.LENGTH_SHORT).show()
-                R.id.test2 -> Toast.makeText(this, "loli", Toast.LENGTH_SHORT).show();
-                else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show();
+                else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
         }

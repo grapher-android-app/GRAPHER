@@ -1,12 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- Sub menu for paths and flows -->
     <item
-        android:title="test1"
-        android:id="@+id/test1"/>
+        android:id="@+id/test1"
+        android:title="Paths, flows...">
+        <menu>
+            <item
+                android:id="@+id/path"
+                android:title="Shortest s-t path"/>
+            <item
+                android:id="@+id/steinerTree"
+                android:title="Steiner Tree"/>
+            <item
+                android:id="@+id/flow"
+                android:title="Max flow"/>
+            <item
+                android:id="@+id/diameter"
+                android:title="Diameter"/>
+            <item
+                android:id="@+id/girth"
+                android:title="Girth"/>
+
+            <item
+                android:id="@+id/allCuts"
+                android:title="Cut vertices"/>
+            <item
+                android:id="@+id/AllBridges"
+                android:title="Bridges"/>
+        </menu>
+    </item>
+
+    <!-- Sub menu for basic algorithms -->
     <item
-        android:title="test2"
-        android:id="@+id/test2"/>
+        android:title="Basic Algorithms"
+        android:id="@+id/test3">
+        <menu>
+            <item
+                android:id="@+id/maximum_clique"
+                android:title="Maximum Clique" />
+            <item
+                android:id ="@+id/maximum_independent_set"
+                android:title ="Max Independent set"
+                />
+            <item
+                android:id ="@+id/vertex_cover"
+                android:title ="Compute vertex cover"
+                />
+            <item
+                android:id ="@+id/connected_vertex_cover"
+                android:title ="Compute Connected Vertex Cover"
+                />
+            <item
+                android:id ="@+id/min_dominating_set"
+                android:title ="Minimum Dominating Set"
+                />
+            <item
+                android:id ="@+id/perf_code"
+                android:title ="Perfect code"
+                />
+
+        </menu>
+    </item>
+
+    <!-- Sub menu for coloring -->
     <item
-        android:title="test3"
-        android:id="@+id/test3"/>
+        android:title="Graph Coloring"
+        android:id="@+id/coloring">
+        <menu>
+            <item
+                android:id="@+id/chromatic_number"
+                android:title="Chromatic Number"/>
+            <item android:id="@+id/optimal_coloring"
+                android:title="Optimal coloring"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/treewidth"
+        android:title="Compute Treewidth"/>
+
+    <item
+        android:id="@+id/minimal_triangulation"
+        android:title="Minimal Triangulation"/>
+
+    <item
+        android:id="@+id/interval"
+        android:title="Interval recognition"/>
+
+    <item
+        android:id="@+id/balanced_separator"
+        android:title="Balanced Separator"/>
+
+    <item
+        android:id="@+id/regularity_deletion_set"
+        android:title="Regularity Deletion Set"/>
+
+    <item
+        android:id="@+id/vertex_integrity"
+        android:title="Vertex Integrity"/>
+
+    <item
+        android:id="@+id/odd_cycle_transversal"
+        android:title="Odd Cycle Transversal"/>
+
+    <item
+        android:id="@+id/feedback_vertex_set"
+        android:title="Feedback Vertex Set"/>
+
+    <item
+        android:id="@+id/connected_feedback_vertex_set"
+        android:title="Connected Feedback Vertex Set"/>
+
+    <item
+        android:id="@+id/compute_mst"
+        android:title="Minimum Spanning Tree"/>
+
+    <item
+        android:id="@+id/simplicial_vertices"
+        android:title="Show simplicial vertices"/>
+
+    <item
+        android:id="@+id/chordality"
+        android:title="Is chordal?"/>
+
+    <item
+        android:id="@+id/claws"
+        android:title="Claw-free?"/>
+
+    <item
+        android:id="@+id/threshold"
+        android:title="Threshold recognition"/>
+
+    <item
+        android:id="@+id/compute_cycle_4"
+        android:title="Show all C_4s"/>
+
+    <item
+        android:id="@+id/bipartition"
+        android:title="Bipartite"/>
+
+    <item
+        android:id="@+id/test_eulerian"
+        android:title="Euler graph?"/>
+
+    <item
+        android:id="@+id/show_center"
+        android:title="Compute Center Vertex"/>
+
+    <item
+        android:id="@+id/bandwidth"
+        android:title="Compute Bandwidth"/>
+
+    <item
+        android:id="@+id/hamiltonian_cycle"
+        android:title="Hamiltonian Cycle"/>
+
+    <item
+        android:id="@+id/hamiltonian_path"
+        android:title="Hamiltonian Path"/>
+
+    <item
+        android:id="@+id/claw_deletion"
+        android:title="Claw-free edge deletion"/>
+
 </menu>
+
+
+
+
+
