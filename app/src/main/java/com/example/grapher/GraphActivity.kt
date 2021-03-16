@@ -13,6 +13,7 @@ import model.Node
 
 /** AppCompatActivity replaces Activity in this library */
 class GraphActivity : AppCompatActivity() {
+    private lateinit var graphView: GraphView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -20,7 +21,7 @@ class GraphActivity : AppCompatActivity() {
         Node.resetCounter()
 
         //Changes the name of the mode you are in
-        val graphView = findViewById<GraphView>(R.id.graphView)
+        graphView = findViewById<GraphView>(R.id.graphView)
         val switchMode = findViewById<Switch>(R.id.mode_switch)
         switchMode?.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
@@ -54,5 +55,11 @@ class GraphActivity : AppCompatActivity() {
             true
         }
         popMenu.show()
+    }
+
+    override fun onBackPressed() {
+        if (!graphView.undo()) {
+            super.onBackPressed()
+        }
     }
 }

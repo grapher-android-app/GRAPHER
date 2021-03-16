@@ -14,6 +14,7 @@ import model.DefaultSupplier
 import model.Node
 import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
+import util.Undo
 
 class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
 
@@ -34,6 +35,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private var isScrolling = false
 
     constructor(context: Context?, attrs: AttributeSet): this(context, attrs,0)
+
+    private var graphWithMemory = Undo(graph)
 
     init {
         gestureListener = MyGestureListener()
@@ -99,7 +102,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     fun addNode(coordinate: Coordinate) {
         val vertex = Node(coordinate)
-        graph.addVertex(vertex)
+        graphWithMemory.addVertex(vertex)
         invalidate()
         refreshDrawableState()
     }
@@ -142,7 +145,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     private fun addEdgeBetween(node: Node){
         val edge = Edge(selectedNode!!, node)
-        graph.addEdge(selectedNode!!,node,edge)
+        graphWithMemory.addEdge(selectedNode!!,node,edge)
         unselectNode()
         invalidate()
         refreshDrawableState()
@@ -153,6 +156,12 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         selectedNode!!.setCoordinate(selectedNode!!.getCoordinate().subtract(coordinate))
         invalidate()
         refreshDrawableState()
+    }
+
+    fun undo() : Boolean {
+        val ret = graphWithMemory.undo()
+        invalidate()
+        return ret
     }
 
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
