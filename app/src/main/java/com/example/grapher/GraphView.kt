@@ -9,6 +9,8 @@ import android.view.ActionMode
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import com.alexvasilkov.gestures.GestureController
+import com.alexvasilkov.gestures.views.interfaces.GestureView
 import model.Edge
 import model.DefaultSupplier
 import model.Node
@@ -16,7 +18,7 @@ import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
 
-class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
+class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr), GestureView {
 
     // Paints can be moved to edge and vertex classes
     private val edgePaint = Paint()
@@ -33,6 +35,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private var selectedNode: Node? = null
 
     private var isScrolling = false
+    private var gestureController: GestureController
 
     constructor(context: Context?, attrs: AttributeSet): this(context, attrs,0)
 
@@ -42,9 +45,13 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         gestureListener = MyGestureListener()
         gestureDetector = GestureDetector(getContext(),gestureListener,handler)
         gestureDetector.setIsLongpressEnabled(true)
+        gestureController = GestureController(this)
         edgePaint.color = resources.getColor(R.color.purple_200, null)
         edgePaint.strokeWidth = 8f
         vertexPaint.color = resources.getColor(R.color.node_color_standard, null)
+        gestureController.settings.isRotationEnabled=true
+        gestureController.settings.setRestrictRotation(false)
+        gestureController.settings.setMaxZoom(3f).setMinZoom(0.25F)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean{
@@ -66,7 +73,6 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     override fun onDraw(canvas : Canvas) {
         super.onDraw(canvas)
-
         for (e in graph.edgeSet()) {
             val source = e.getSource()
             val target = e.getTarget()
@@ -130,7 +136,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     private fun hasSelectedNode(): Boolean = selectedNode!=null
 
-    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean = node.getCoordinate().subtract(coordinate).length()<=node.getSize()
+    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean = node.getCoordinate().subtract(coordinate).length()<=node.getSize()*2
 
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
@@ -253,5 +259,9 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
          * This always returns true, because if it didn't, then long press would always be triggered
          */
         override fun onDown(e: MotionEvent?): Boolean = true
+    }
+
+    override fun getController(): GestureController {
+        return gestureController
     }
 }
