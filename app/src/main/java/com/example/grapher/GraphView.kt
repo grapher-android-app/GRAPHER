@@ -1,22 +1,22 @@
 package com.example.grapher
 
+import algorithms.SpringLayout
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.Log
-import android.view.ActionMode
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.alexvasilkov.gestures.GestureController
 import com.alexvasilkov.gestures.views.interfaces.GestureView
 import model.Edge
-import model.DefaultSupplier
 import model.Node
 import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
+import java.util.function.Supplier
 
 class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr), GestureView {
 
@@ -24,9 +24,10 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private val edgePaint = Paint()
     private val vertexPaint = Paint()
 
-    private var edgeSup = DefaultSupplier<Edge<Node>>()
-    private var graph : SimpleGraph<Node, Edge<Node>> =
-        SimpleGraph(null, edgeSup, false)
+    private var n1 = Node(Coordinate.ORIGO)
+    private var n2 = Node(Coordinate.ZERO)
+    private var edgeSup = Supplier {Edge(n1, n2)}
+    private var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph(null, edgeSup, false)
 
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
@@ -40,6 +41,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     constructor(context: Context?, attrs: AttributeSet): this(context, attrs,0)
 
     private var graphWithMemory = Undo(graph)
+
+    private var layout : SpringLayout? = null
 
     init {
         gestureListener = MyGestureListener()
@@ -109,6 +112,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     fun addNode(coordinate: Coordinate) {
         val vertex = Node(coordinate)
         graphWithMemory.addVertex(vertex)
+        Log.d("NODE ADDED", graph.toString())
         invalidate()
         refreshDrawableState()
     }
@@ -151,7 +155,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     private fun addEdgeBetween(node: Node){
         val edge = Edge(selectedNode!!, node)
-        graphWithMemory.addEdge(selectedNode!!,node,edge)
+        graphWithMemory.addEdge(selectedNode!!,node, edge)
+        Log.d("EDGE ADDED", graph.toString())
         unselectNode()
         invalidate()
         refreshDrawableState()
@@ -168,6 +173,22 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         val ret = graphWithMemory.undo()
         invalidate()
         return ret
+    }
+
+    fun longShake(n : Int) {
+        if (layout == null) {
+            layout = SpringLayout(graph)
+        }
+        layout!!.iterate(n)
+        invalidate()
+    }
+
+    fun shake() {
+        if (layout == null) {
+            layout = SpringLayout(graph)
+        }
+        longShake(20)
+        invalidate()
     }
 
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
