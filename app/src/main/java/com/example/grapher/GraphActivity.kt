@@ -1,13 +1,8 @@
 package com.example.grapher
 
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
 import model.Node
 
