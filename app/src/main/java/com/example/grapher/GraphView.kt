@@ -309,7 +309,14 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     //TODO move to GraphViewController Class
 
     fun showCenterNode() : Boolean {
+        clearAll()
         val center : Node = CenterInspector.getCenter(graph) ?: return false
+        selectedNode = center
         return true
+    }
+
+    fun clearAll() {
+        selectedNode = null
+        invalidate()
     }
 }
