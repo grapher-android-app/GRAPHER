@@ -40,7 +40,10 @@ class Node (color: Int, coordinate: Coordinate, size: Float, label: String)
     private val id: Int = CURRENT_ID++
 
     constructor (coordinate: Coordinate) :
-            this(Color.rgb(0, 0, 200), coordinate, DEFAULT_SIZE)
+            this(Color.rgb(0, 0, 200), coordinate)
+
+    constructor (color: Int, coordinate: Coordinate) :
+            this(color, coordinate, DEFAULT_SIZE)
 
     constructor (color: Int, coordinate: Coordinate, size: Float) :
                 this(color, coordinate, size, "")
