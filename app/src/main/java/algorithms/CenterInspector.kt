@@ -55,7 +55,7 @@ class CenterInspector {
                 largestComponent = max(largestComponent, cc.size)
             }
 
-            for(i in 0..ccs.size){
+            for(i in 0 until ccs.size){
                 val componentSize : Int = ccs[i].size
                 for (v: V in ccs[i]){
                     vertexToAntiSize[v] = (largestComponent - componentSize)
