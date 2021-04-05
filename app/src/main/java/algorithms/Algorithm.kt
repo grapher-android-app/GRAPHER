@@ -4,7 +4,7 @@ import org.jgrapht.graph.SimpleGraph
 import kotlin.math.min
 import kotlin.math.pow
 
-abstract class Algorithm<V, E, Return>(private val graph : SimpleGraph<V, E>) {
+abstract class Algorithm<V, E, Return>(val graph : SimpleGraph<V, E>) {
 
     var cancelFlag : Boolean = false
     // val progressListener : ProgressListener
