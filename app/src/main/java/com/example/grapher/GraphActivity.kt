@@ -48,6 +48,9 @@ class GraphActivity : AppCompatActivity() {
                     var conn : Boolean = graphView.showCenterNode()
                     // TODO create easy toast feedback
                 }
+                R.id.compute_cycle_4 -> {
+                    graphView.showAllCycle4()
+                }
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
