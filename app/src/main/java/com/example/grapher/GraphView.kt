@@ -20,6 +20,25 @@ import java.util.function.Supplier
 
 class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr), GestureView {
 
+    companion object {
+        @Volatile var startTime : Long = 0
+        @Volatile var isStarted : Boolean = false
+        fun time(start : Boolean) {
+            val now : Long = System.currentTimeMillis()
+            if (start) {
+                startTime = now
+                isStarted = true
+            }
+            else {
+                if (!isStarted) return
+                val duration : Long = now - startTime
+                val sec : Double = duration / 1000.0
+                println("> $sec seconds")
+                isStarted = false
+            }
+        }
+    }
+
     // Paints can be moved to edge and vertex classes
     private val edgePaint = Paint()
     private val vertexPaint = Paint()
