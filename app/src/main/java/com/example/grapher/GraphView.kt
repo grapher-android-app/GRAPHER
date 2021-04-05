@@ -1,5 +1,6 @@
 package com.example.grapher
 
+import algorithms.CenterInspector
 import algorithms.SpringLayout
 import android.content.Context
 import android.graphics.Canvas
@@ -303,5 +304,12 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     override fun getController(): GestureController {
         return gestureController
+    }
+
+    //TODO move to GraphViewController Class
+
+    fun showCenterNode() : Boolean {
+        val center : Node = CenterInspector.getCenter(graph) ?: return false
+        return true
     }
 }

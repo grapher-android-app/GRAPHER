@@ -1,15 +1,18 @@
 package algorithms
 
+import model.Edge
+import model.Node
 import org.jgrapht.graph.DefaultUndirectedGraph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths
+import org.jgrapht.graph.SimpleGraph
 import kotlin.collections.HashMap
 import kotlin.math.max
 
 class CenterInspector {
 
     companion object{
-       fun <V,E> getCenter(graph: DefaultUndirectedGraph<V, E>):  V {
+       fun <V,E> getCenter(graph: SimpleGraph<V, E>):  V? {
            var center: V? = null
            var minDistance: Int = graph.vertexSet().size
            val paths = FloydWarshallShortestPaths<V, E>(graph)
@@ -38,10 +41,10 @@ class CenterInspector {
                    center = v
                }
            }
-            return center!!
+            return center
        }
 
-        private fun <V,E> calculateComponents(graph: DefaultUndirectedGraph<V, E>): Map<V, Int> {
+        private fun <V,E> calculateComponents(graph: SimpleGraph<V, E>): Map<V, Int> {
             val vertexToAntiSize = HashMap<V, Int>()
             val ci = ConnectivityInspector<V, E>(graph)
 

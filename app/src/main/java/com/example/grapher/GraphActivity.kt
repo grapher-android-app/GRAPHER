@@ -44,6 +44,10 @@ class GraphActivity : AppCompatActivity() {
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.test1 -> Toast.makeText(this, "lol", Toast.LENGTH_SHORT).show()
+                R.id.show_center -> {
+                    var conn : Boolean = graphView.showCenterNode()
+                    // TODO create easy toast feedback
+                }
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
