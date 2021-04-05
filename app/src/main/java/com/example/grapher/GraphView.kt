@@ -1,6 +1,7 @@
 package com.example.grapher
 
 import algorithms.CenterInspector
+import algorithms.CycleInspector
 import algorithms.SpringLayout
 import android.content.Context
 import android.graphics.Canvas
@@ -44,6 +45,18 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private val edgePaint = Paint()
     private val vertexPaint = Paint()
 
+    // colors used for different types of nodes and edges
+    private val def_node_color : Int = resources.getColor(R.color.teal_700, null)
+    private val marked_node_color : Int = resources.getColor(R.color.teal_200, null)
+    private val selected_node_color : Int = resources.getColor(R.color.purple_200, null)
+    private val touched_node_color : Int = resources.getColor(R.color.node_color_standard, null)
+    private val def_edge_color : Int = resources.getColor(R.color.purple_500, null)
+    private val def_marked_color : Int = resources.getColor(R.color.purple_700, null)
+
+    private var hightlightedNodes = HashSet<Node>()
+    private var selectedNodes = HashSet<Node>()
+    private var markedEdges = HashSet<Edge<Node>>()
+
     private var n1 = Node(Coordinate.ORIGO)
     private var n2 = Node(Coordinate.ZERO)
     private var edgeSup = Supplier {Edge(n1, n2)}
@@ -73,8 +86,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         edgePaint.strokeWidth = 8f
         vertexPaint.color = resources.getColor(R.color.node_color_standard, null)
         gestureController.settings.isRotationEnabled=true
-        gestureController.settings.setRestrictRotation(false)
-        gestureController.settings.setMaxZoom(3f).setMinZoom(0.25F)
+        gestureController.settings.isRestrictRotation = false
+        gestureController.settings.setMaxZoom(3f).minZoom = 0.25F
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean{
@@ -94,6 +107,37 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         refreshDrawableState()
     }
 
+    // TODO change to this implementation
+    /**
+     * Updates the color of all edges and nodes based on selection and highlighting
+     * from user input and algorithm results
+     */
+    fun redraw() {
+        if (graph.vertexSet() == null)  {
+            return
+        }
+
+        for (node : Node in graph.vertexSet()) {
+            node.setColor(if (mode) def_node_color else touched_node_color)
+            if (hightlightedNodes.contains(node)) {
+                node.setColor(marked_node_color)
+            }
+            if (selectedNodes.contains(node)) {
+                node.setColor(selected_node_color)
+            }
+        }
+
+        for (edge: Edge<Node> in graph.edgeSet()) {
+            if (markedEdges.contains(edge)) {
+                edge.setColor(def_marked_color)
+            }
+            else {
+                edge.setColor(def_edge_color)
+            }
+        }
+        invalidate()
+    }
+
     override fun onDraw(canvas : Canvas) {
         super.onDraw(canvas)
         for (e in graph.edgeSet()) {
@@ -106,11 +150,13 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
             canvas.drawLine(x1, y1, x2, y2, edgePaint)
         }
+        /*
         if (mode){
             vertexPaint.color = resources.getColor(R.color.node_color_standard,null)
         } else {
             vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected,null)
         }
+         */
         for (v in graph.vertexSet()) {
             if (selectedNode!=null && selectedNode==v){
                 vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected,null)
@@ -119,6 +165,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
                 vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected,null)
             }
             else {
+                vertexPaint.color = v.getColor()
                 canvas.drawCircle(
                         v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint)
             }
@@ -130,7 +177,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     }
 
     fun addNode(coordinate: Coordinate) {
-        val vertex = Node(coordinate)
+        val vertex = Node(def_node_color, coordinate)
         graphWithMemory.addVertex(vertex)
         Log.d("NODE ADDED", graph.toString())
         invalidate()
@@ -307,16 +354,44 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     }
 
     //TODO move to GraphViewController Class
+    // TODO check if works on multiple cycles
+
+    fun showAllCycle4() : Int {
+        val cycles : Collection<List<Node>> = CycleInspector.findAllC4(graph)
+        clearAll()
+        for (cycle : List<Node> in cycles) {
+            for (i : Int in cycle.indices) {
+                val v : Node = cycle[i % cycle.size]
+                val u : Node = cycle[(i + 1) % cycle.size]
+                hightlightedNodes.add(v)
+                hightlightedNodes.add(u)
+
+                if (graph.containsEdge(v, u)) {
+                    val e : Edge<Node> = graph.getEdge(v, u)
+                    markedEdges.add(e)
+                }
+                else {
+                    error("Strange, lacks edge for v=$v, u=$u")
+                }
+            }
+        }
+        redraw()
+        return cycles.size
+    }
 
     fun showCenterNode() : Boolean {
         clearAll()
+        redraw()
         val center : Node = CenterInspector.getCenter(graph) ?: return false
-        selectedNode = center
+        hightlightedNodes.add(center)
+        redraw()
         return true
     }
 
     fun clearAll() {
-        selectedNode = null
-        invalidate()
+        markedEdges.clear()
+        selectedNodes.clear()
+        hightlightedNodes.clear()
+        redraw()
     }
 }
