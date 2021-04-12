@@ -10,7 +10,7 @@ class Edge<V>(private val source: V, private val target: V) : Colorful, Geometri
         private const val serialVersionUID = 1L
     }
     private var color: Int = 0
-    private lateinit var style: EdgeStyle
+    private var style: EdgeStyle = EdgeStyle.SOLID
 
     private lateinit var coordinate: Coordinate
 
