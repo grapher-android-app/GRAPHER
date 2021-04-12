@@ -28,6 +28,10 @@ class GraphActivity : AppCompatActivity() {
                 graphView.changeMode()
             }
         }
+        val shakeButton = findViewById<Button>(R.id.shake_button)
+        shakeButton?.setOnClickListener {
+            graphView.shake()
+        }
 
         val hamburgerButton = findViewById<Button>(R.id.hamburger)
         hamburgerButton?.setOnClickListener{

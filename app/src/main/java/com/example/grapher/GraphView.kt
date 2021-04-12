@@ -88,6 +88,9 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         gestureController.settings.isRotationEnabled=true
         gestureController.settings.isRestrictRotation = false
         gestureController.settings.setMaxZoom(3f).minZoom = 0.25F
+
+        layout = SpringLayout(graph)
+        layout!!.iterate(20)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean{

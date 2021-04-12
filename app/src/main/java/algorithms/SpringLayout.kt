@@ -27,7 +27,7 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
         const val MAX_MOVEMENT : Float = 50f
     }
 
-    //private var edgeSup = EdgeSupplier<Edge<SpringNode>>()
+    // placeholder for not functional edge-supplier
     private var s1 = SpringNode(Node(Coordinate(0f, 0f)), 1)
     private var s2 = SpringNode(Node(Coordinate(0f, 0f)), 2)
     private var edgeSup = Supplier { Edge(s1, s2) }
@@ -130,6 +130,7 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
 
         layout = SimpleGraph<SpringNode, Edge<SpringNode>>(null, edgeSup, false)
 
+        // fills the hashsets with easy reference to and from the real graph and SpringLayout
         for (n : Geometric in graph.vertexSet()) {
             val sn = SpringNode(n, nodeToComponent[n]!!)
             layout.addVertex(sn)
@@ -140,8 +141,9 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
         for (edge : Edge<Node> in graph.edgeSet()) {
             val source : Geometric = edge.getSource()
             val target : Geometric = edge.getTarget()
-            //TODO causes error because of supplier
-            layout.addEdge(fromGraphToLayout[source], fromGraphToLayout[target])
+            // Supplier workout as usual
+            val edge = Edge(fromGraphToLayout[source]!!, fromGraphToLayout[target]!!)
+            layout.addEdge(fromGraphToLayout[source], fromGraphToLayout[target], edge)
         }
     }
 
