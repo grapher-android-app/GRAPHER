@@ -55,6 +55,14 @@ class GraphActivity : AppCompatActivity() {
                 R.id.compute_cycle_4 -> {
                     graphView.showAllCycle4()
                 }
+                R.id.flow -> {
+                    val flow = graphView.showFlow()
+                    when {
+                        flow < 0 -> shortToast("Please select two nodes (tap in Node mode)")
+                        flow == 0 -> shortToast("Not connected")
+                        else -> shortToast("Max flow $flow")
+                    }
+                }
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
@@ -66,5 +74,13 @@ class GraphActivity : AppCompatActivity() {
         if (!graphView.undo()) {
             super.onBackPressed()
         }
+    }
+
+    /**
+     * Generates a short toast
+     * @param s string to display
+     */
+    fun shortToast(toast : String) {
+        Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
     }
 }

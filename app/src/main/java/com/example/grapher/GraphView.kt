@@ -2,6 +2,7 @@ package com.example.grapher
 
 import algorithms.CenterInspector
 import algorithms.CycleInspector
+import algorithms.FlowInspector
 import algorithms.SpringLayout
 import android.content.Context
 import android.graphics.Canvas
@@ -14,7 +15,9 @@ import android.view.View
 import com.alexvasilkov.gestures.GestureController
 import com.alexvasilkov.gestures.views.interfaces.GestureView
 import model.Edge
+import model.EdgeStyle
 import model.Node
+import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
@@ -51,9 +54,9 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private val selected_node_color : Int = resources.getColor(R.color.purple_200, null)
     private val touched_node_color : Int = resources.getColor(R.color.node_color_standard, null)
     private val def_edge_color : Int = resources.getColor(R.color.purple_500, null)
-    private val def_marked_color : Int = resources.getColor(R.color.purple_700, null)
+    private val marked_edge_color : Int = resources.getColor(R.color.purple_700, null)
 
-    private var hightlightedNodes = HashSet<Node>()
+    private var highlightedNodes = HashSet<Node>()
     private var selectedNodes = HashSet<Node>()
     private var markedEdges = HashSet<Edge<Node>>()
 
@@ -94,7 +97,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean{
-        if (event!=null && event.action.equals(MotionEvent.ACTION_UP)){ //stops scrolling
+        if (event!=null && event.action == MotionEvent.ACTION_UP){ //stops scrolling
             if (isScrolling){
                 Log.d("scroll","stopped scrolling")
                 isScrolling=false
@@ -106,7 +109,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     fun changeMode(){
         mode = !mode
-        invalidate()
+        clearAll()
+        redraw()
         refreshDrawableState()
     }
 
@@ -116,13 +120,11 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
      * from user input and algorithm results
      */
     fun redraw() {
-        if (graph.vertexSet() == null)  {
-            return
-        }
+        if (graph.vertexSet() == null)  return
 
         for (node : Node in graph.vertexSet()) {
             node.setColor(if (mode) def_node_color else touched_node_color)
-            if (hightlightedNodes.contains(node)) {
+            if (highlightedNodes.contains(node)) {
                 node.setColor(marked_node_color)
             }
             if (selectedNodes.contains(node)) {
@@ -131,11 +133,12 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         }
 
         for (edge: Edge<Node> in graph.edgeSet()) {
+            edge.setColor(def_edge_color)
             if (markedEdges.contains(edge)) {
-                edge.setColor(def_marked_color)
+                edge.setStyle(EdgeStyle.BOLD)
             }
             else {
-                edge.setColor(def_edge_color)
+                edge.setStyle(EdgeStyle.SOLID)
             }
         }
         invalidate()
@@ -143,6 +146,10 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
     override fun onDraw(canvas : Canvas) {
         super.onDraw(canvas)
+
+        edgePaint.strokeWidth = 5F
+        edgePaint.style = Paint.Style.STROKE
+
         for (e in graph.edgeSet()) {
             val source = e.getSource()
             val target = e.getTarget()
@@ -151,15 +158,16 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
             val x2 = target.getCoordinate().getX()
             val y2 = target.getCoordinate().getY()
 
+            if (e.getStyle() == EdgeStyle.BOLD) {
+                edgePaint.color = marked_edge_color
+                edgePaint.strokeWidth = 10F
+                canvas.drawLine(x1, y1, x2, y2, edgePaint)
+                edgePaint.strokeWidth = 5F
+            }
+            edgePaint.color = e.getColor()
             canvas.drawLine(x1, y1, x2, y2, edgePaint)
         }
-        /*
-        if (mode){
-            vertexPaint.color = resources.getColor(R.color.node_color_standard,null)
-        } else {
-            vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected,null)
-        }
-         */
+
         for (v in graph.vertexSet()) {
             if (selectedNode!=null && selectedNode==v){
                 vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected,null)
@@ -196,15 +204,20 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         return null
     }
 
+    private fun markNode(node : Node) {
+        selectedNodes.add(node)
+        redraw()
+    }
+
     private fun selectNode(node: Node){
         selectedNode = node
-        invalidate()
+        redraw()
         refreshDrawableState()
     }
 
     private fun unselectNode(){
         selectedNode = null
-        invalidate()
+        redraw()
         refreshDrawableState()
     }
 
@@ -228,7 +241,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         graphWithMemory.addEdge(selectedNode!!,node, edge)
         Log.d("EDGE ADDED", graph.toString())
         unselectNode()
-        invalidate()
+        redraw()
         refreshDrawableState()
     }
 
@@ -273,7 +286,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
                         addNode(e.x, e.y)
                     }
                     else {
-                        Log.d("OnSingleTapConfirmed", "Didn't add Node")
+                        markNode(getNodeAtCoordinate(coordinate)!!)
+                        Log.d("OnSingleTapConfirmed", "Selected Node")
                     }
                 }
                 else {
@@ -366,8 +380,8 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
             for (i : Int in cycle.indices) {
                 val v : Node = cycle[i % cycle.size]
                 val u : Node = cycle[(i + 1) % cycle.size]
-                hightlightedNodes.add(v)
-                hightlightedNodes.add(u)
+                highlightedNodes.add(v)
+                highlightedNodes.add(u)
 
                 if (graph.containsEdge(v, u)) {
                     val e : Edge<Node> = graph.getEdge(v, u)
@@ -386,15 +400,42 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         clearAll()
         redraw()
         val center : Node = CenterInspector.getCenter(graph) ?: return false
-        hightlightedNodes.add(center)
+        highlightedNodes.add(center)
         redraw()
         return true
+    }
+
+    fun showFlow() : Int {
+        if (selectedNodes.size != 2) {
+            return -1
+        }
+        val iter : Iterator<Node> = selectedNodes.iterator()
+        val s : Node = iter.next()
+        val t : Node = iter.next()
+
+        if (!ConnectivityInspector<Node, Edge<Node>>(graph).pathExists(s, t)) {
+            clearAll()
+            redraw()
+            return 0
+        }
+        clearAll()
+
+        val flow = FlowInspector.findFlow(graph, s, t)
+        val edges : Collection<Edge<Node>> = flow.second
+
+        highlightedNodes.add(s)
+        highlightedNodes.add(t)
+        for (e : Edge<Node> in edges) {
+            markedEdges.add(e)
+        }
+        redraw()
+        return flow.first
     }
 
     fun clearAll() {
         markedEdges.clear()
         selectedNodes.clear()
-        hightlightedNodes.clear()
+        highlightedNodes.clear()
         redraw()
     }
 }
