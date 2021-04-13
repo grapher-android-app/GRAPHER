@@ -23,6 +23,10 @@ import util.Coordinate
 import util.Undo
 import java.util.function.Supplier
 
+/**
+ * Class dedicated for all functionality directly related to information being displayed
+ * in the view where the graph is drawn.
+ */
 class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr), GestureView {
 
     companion object {
@@ -68,7 +72,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
 
-    private var mode: Boolean = true
+    private var nodeMode: Boolean = true
     private var selectedNode: Node? = null
 
     private var isScrolling = false
@@ -108,7 +112,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
     }
 
     fun changeMode(){
-        mode = !mode
+        nodeMode = !nodeMode
         clearAll()
         redraw()
         refreshDrawableState()
@@ -123,7 +127,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         if (graph.vertexSet() == null)  return
 
         for (node : Node in graph.vertexSet()) {
-            node.setColor(if (mode) def_node_color else touched_node_color)
+            node.setColor(if (nodeMode) def_node_color else touched_node_color)
             if (highlightedNodes.contains(node)) {
                 node.setColor(marked_node_color)
             }
@@ -280,7 +284,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
             if (e != null){
                 val coordinate = Coordinate(e.x,e.y)
-                if (mode){
+                if (nodeMode){
                     if (!hasNode(coordinate)){
                         Log.d("OnSingleTapConfirmed","Added Node")
                         addNode(e.x, e.y)
@@ -325,7 +329,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
         override fun onDoubleTap(e: MotionEvent?): Boolean {
             Log.d("onDoubleTap","onSingleTapConfirmed")
-            if (mode){
+            if (nodeMode){
 
             } else{
 
@@ -335,7 +339,7 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
 
         override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
             if (e1!=null && e2!=null){
-                if (mode) {
+                if (nodeMode) {
                     if (isScrolling) {
                         moveNode(distanceX, distanceY)
                     } else {
@@ -432,6 +436,9 @@ class GraphView(context : Context?, attrs: AttributeSet, defStyleAttr: Int = 0) 
         return flow.first
     }
 
+    /**
+     * Catch all method to call when reset graph to default representation
+     */
     fun clearAll() {
         markedEdges.clear()
         selectedNodes.clear()
