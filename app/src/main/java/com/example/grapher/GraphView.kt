@@ -6,7 +6,6 @@ import algorithms.FlowInspector
 import algorithms.SpringLayout
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -99,13 +98,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         gestureListener = MyGestureListener()
         gestureDetector = GestureDetector(getContext(), gestureListener, handler)
         gestureDetector.setIsLongpressEnabled(true)
-        //gestureController = GestureController(this)
         edgePaint.color = resources.getColor(R.color.purple_200, null)
         edgePaint.strokeWidth = 8f
         vertexPaint.color = resources.getColor(R.color.node_color_standard, null)
-        //gestureController.settings.isRotationEnabled=true
-        //gestureController.settings.isRestrictRotation = false
-        //gestureController.settings.setMaxZoom(3f).minZoom = 0.25F
 
         layout = SpringLayout(graph)
         layout!!.iterate(20)
