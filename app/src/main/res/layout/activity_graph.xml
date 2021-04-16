@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".GraphActivity">
 
-    <com.alexvasilkov.gestures.views.GestureFrameLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/navbar"
@@ -19,18 +19,14 @@
         <FrameLayout
             android:id="@+id/frame_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintBottom_toTopOf="@+id/navbar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent">
 
             <com.example.grapher.GraphView
                 android:id="@+id/graphView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
-    </com.alexvasilkov.gestures.views.GestureFrameLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/navbar"
