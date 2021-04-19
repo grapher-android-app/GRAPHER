@@ -4,7 +4,7 @@ import org.jgrapht.graph.SimpleGraph
 import kotlin.math.min
 import kotlin.math.pow
 
-abstract class Algorithm<V, E, Return>(val graph : SimpleGraph<V, E>) {
+abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?) {
 
     var cancelFlag : Boolean = false
     // val progressListener : ProgressListener
@@ -20,11 +20,17 @@ abstract class Algorithm<V, E, Return>(val graph : SimpleGraph<V, E>) {
     }
 
     fun graphSize() : Int {
-        return graph.vertexSet().size
+        if (graph != null) {
+            return graph.vertexSet().size
+        }
+        return 0
     }
 
     fun graphEdgeSize() : Int {
-        return graph.edgeSet().size
+        if (graph != null) {
+            return graph.edgeSet().size
+        }
+        return 0
     }
 
     fun cancel() {

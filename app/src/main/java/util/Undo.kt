@@ -68,17 +68,17 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
         addHistory(node, false)
         return graph.removeVertex(node)
     }
-
-    fun addEdge(e : Edge<Node>) : Edge<Node> {
-        return addEdge(e.getSource(), e.getTarget(), e)
-    }
-
-    fun addEdge(v : Node, u : Node, edge : Edge<Node>) : Edge<Node> {
-        addHistory(v, u, true)
-        graph.addEdge(v, u, edge)
-        // TODO This is changed once again because of incorrect Supplier implementation
-        return edge
-    }
+//
+//    fun addEdge(e : Edge<Node>) : Edge<Node> {
+//        return addEdge(e.getSource(), e.getTarget(), e)
+//    }
+//
+//    fun addEdge(v : Node, u : Node, edge : Edge<Node>) : Edge<Node> {
+//        addHistory(v, u, true)
+//        graph.addEdge(v, u, edge)
+//        // TODO This is changed once again because of incorrect Supplier implementation
+//        return edge
+//    }
 
     fun addEdge(v : Node, u : Node) : Edge<Node> {
         addHistory(v, u, true)

@@ -1,11 +1,9 @@
 package com.example.grapher
 
-import algorithms.CenterInspector
-import algorithms.CycleInspector
-import algorithms.FlowInspector
-import algorithms.SpringLayout
+import algorithms.*
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -168,16 +166,16 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         edgePaint.strokeWidth = 5F
         edgePaint.style = Paint.Style.STROKE
 
-//        if (prevPointerCoords!=null) {
-//            vertexPaint.setColor(Color.RED)
-//            canvas.drawCircle(
-//                    prevPointerCoords!![0].getX(), prevPointerCoords!![0].getY(), 15F, vertexPaint
-//            )
-//            vertexPaint.setColor(Color.BLUE)
-//            canvas.drawCircle(
-//                    prevPointerCoords!![1].getX(), prevPointerCoords!![1].getY(), 15F, vertexPaint
-//            )
-//        }
+        if (prevPointerCoords!=null) {
+            vertexPaint.setColor(Color.RED)
+            canvas.drawCircle(
+                    prevPointerCoords!![0].getX(), prevPointerCoords!![0].getY(), 15F, vertexPaint
+            )
+            vertexPaint.setColor(Color.BLUE)
+            canvas.drawCircle(
+                    prevPointerCoords!![1].getX(), prevPointerCoords!![1].getY(), 15F, vertexPaint
+            )
+        }
 
         val m = matrix
         prevMatrix.set(m)
@@ -207,7 +205,8 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
         for (v in graph.vertexSet()) {
             if (selectedNode!=null && selectedNode==v){
-                vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected, null)
+                vertexPaint.color = v.getColor()
+                //vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected, null)
                 canvas.drawCircle(
                         v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint
                 )
@@ -379,6 +378,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 distanceY: Float
         ): Boolean {
             if (e1!=null && e2!=null){
+                Log.d("POINTERCOUNT","POINTER COUNT IS ${e2.pointerCount}")
                 if (e2.pointerCount==1){
                     prevPointerCoords = null
                     if (nodeMode) {
@@ -474,6 +474,18 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
         redraw()
         return cycles.size
+    }
+
+    fun exactDominatingSet(){
+        val eds = ExactDominatingSet(graph)
+        val nodes = eds.execute()
+        if (nodes != null) {
+            for (node in nodes){
+                highlightedNodes.add(node)
+            }
+        }
+        redraw()
+        invalidate()
     }
 
     fun showCenterNode() : Boolean {
