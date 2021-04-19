@@ -80,6 +80,15 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
         return edge
     }
 
+    fun addEdge(v : Node, u : Node) : Edge<Node> {
+        addHistory(v, u, true)
+        val edge = graph.addEdge(v, u)
+        edge.setSource(v)
+        edge.setTarget(u)
+        // TODO This is changed once again because of incorrect Supplier implementation
+        return edge
+    }
+
     fun removeEdge(v : Node, u : Node) : Edge<Node> {
         addHistory(v, u, false)
         return graph.removeEdge(v, u)

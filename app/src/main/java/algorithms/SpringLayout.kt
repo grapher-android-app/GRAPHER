@@ -2,6 +2,8 @@ package algorithms
 
 import model.Edge
 import model.Node
+import model.SpringNode
+import model.SpringSupplier
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.graph.SimpleGraph
 import settings.Geometric
@@ -30,9 +32,10 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
     // placeholder for not functional edge-supplier
     private var s1 = SpringNode(Node(Coordinate(0f, 0f)), 1)
     private var s2 = SpringNode(Node(Coordinate(0f, 0f)), 2)
-    private var edgeSup = Supplier { Edge(s1, s2) }
-    private var layout : SimpleGraph<SpringNode, Edge<SpringNode>> =
-            SimpleGraph(null, edgeSup, false)
+//    private var edgeSup = Supplier { Edge(s1, s2) }
+//    private var layout : SimpleGraph<SpringNode, Edge<SpringNode>> =
+//            SimpleGraph(null, edgeSup, false)
+    private var layout : SimpleGraph<SpringNode, Edge<SpringNode>> = SimpleGraph(SpringSupplier(), Supplier{ Edge<SpringNode>() }, false)
 
     var nodeToComponent = HashMap<Node, Int>()
 
@@ -128,7 +131,8 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
             }
         }
 
-        layout = SimpleGraph<SpringNode, Edge<SpringNode>>(null, edgeSup, false)
+        //layout = SimpleGraph<SpringNode, Edge<SpringNode>>(null, edgeSup, false)
+        layout = SimpleGraph(SpringSupplier(), Supplier{ Edge<SpringNode>() }, false)
 
         // fills the hashsets with easy reference to and from the real graph and SpringLayout
         for (n : Geometric in graph.vertexSet()) {
@@ -142,8 +146,10 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
             val source : Geometric = edge.getSource()
             val target : Geometric = edge.getTarget()
             // Supplier workout as usual
-            val edge = Edge(fromGraphToLayout[source]!!, fromGraphToLayout[target]!!)
-            layout.addEdge(fromGraphToLayout[source], fromGraphToLayout[target], edge)
+            //val edge = Edge(fromGraphToLayout[source]!!, fromGraphToLayout[target]!!)
+            val edge = layout.addEdge(fromGraphToLayout[source], fromGraphToLayout[target])
+            edge.setSource(fromGraphToLayout[source]!!)
+            edge.setTarget(fromGraphToLayout[target]!!)
         }
     }
 
@@ -178,20 +184,4 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
         }
     }
 
-    inner class SpringNode(val node : Geometric, val component : Int) : Geometric {
-        var position : Coordinate = node.getCoordinate()
-        var netForce = Coordinate.ZERO
-
-        override fun getCoordinate(): Coordinate {
-            return position
-        }
-
-        override fun setCoordinate(coordinate: Coordinate) {
-            this.position = coordinate
-        }
-
-        fun sameComponent(other : SpringNode) : Boolean {
-            return component == other.component
-        }
-    }
 }

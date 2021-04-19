@@ -18,6 +18,7 @@ import model.EdgeStyle
 import model.Node
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.graph.SimpleGraph
+import org.jgrapht.util.SupplierUtil
 import util.Coordinate
 import util.Undo
 import java.util.function.Supplier
@@ -70,8 +71,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
     private var n1 = Node(Coordinate.ORIGO)
     private var n2 = Node(Coordinate.ZERO)
-    private var edgeSup = Supplier {Edge(n1, n2)}
-    private var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph(null, edgeSup, false)
+    private var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph({ Node(Coordinate.ORIGO) }, { Edge<Node>() }, false)
 
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
@@ -279,8 +279,8 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private fun hasEdge(node: Node): Boolean = graph.containsEdge(selectedNode, node)
 
     private fun addEdgeBetween(node: Node){
-        val edge = Edge(selectedNode!!, node)
-        graphWithMemory.addEdge(selectedNode!!, node, edge)
+//        val edge = Edge(selectedNode!!, node)
+        graphWithMemory.addEdge(selectedNode!!, node)
         Log.d("EDGE ADDED", graph.toString())
         unselectNode()
         redraw()
