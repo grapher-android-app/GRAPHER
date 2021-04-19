@@ -1,8 +1,10 @@
 package algorithms
 
 import model.Edge
+import model.Node
 import org.jgrapht.graph.SimpleGraph
 import util.Neighbors
+import java.util.function.Supplier
 
 class PowerGraph {
 
@@ -16,7 +18,7 @@ class PowerGraph {
          * @return new graph resuing vertex object
          *
          */
-        fun <V, E> constructPowerGraph(graph: SimpleGraph<V, E>): SimpleGraph<V,E>{
+        fun constructPowerGraph(graph: SimpleGraph<Node, Edge<Node>>): SimpleGraph<Node, Edge<Node>>{
             return constructPowerGraph(graph,2)
         }
 
@@ -27,19 +29,21 @@ class PowerGraph {
          *
          * @return new graph reusing vertex object
          */
-        fun <V, E> constructPowerGraph(graph: SimpleGraph<V,E>, n: Int): SimpleGraph<V, E> {
+        fun constructPowerGraph(graph: SimpleGraph<Node,Edge<Node>>, n: Int): SimpleGraph<Node, Edge<Node>> {
             // Takes a graph and creates the power graph of the given graph
-            var power = SimpleGraph<V,E>(null, graph.edgeSupplier, false)
-            for(v: V in graph.vertexSet()){
+            var power = SimpleGraph<Node,Edge<Node>>(graph.vertexSupplier, graph.edgeSupplier, false)
+            for(v in graph.vertexSet()){
                 power.addVertex(v)
             }
 
 
-            for(v: V in graph.vertexSet()){
-                val neighbors : Set<V> = Neighbors.openNNeighborhood(graph, v, n)
-                for(u: V in neighbors) if(!power.containsEdge(v,u)) {
+            for(v in graph.vertexSet()){
+                val neighbors : Set<Node> = Neighbors.openNNeighborhood(graph, v, n)
+                for(u in neighbors) if(!power.containsEdge(v,u)) {
                     //TODO gonna crash because supplier
-                    power.addEdge(v,u)
+                    val edge = power.addEdge(u,v)
+                    edge.setSource(u)
+                    edge.setTarget(v)
                 }
             }
             return power

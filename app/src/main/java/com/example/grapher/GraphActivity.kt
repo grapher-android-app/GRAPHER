@@ -58,6 +58,9 @@ class GraphActivity : AppCompatActivity() {
                 R.id.min_dominating_set -> {
                     graphView.exactDominatingSet()
                 }
+                R.id.power -> {
+                    graphView.constructPower()
+                }
                 R.id.flow -> {
                     val flow = graphView.showFlow()
                     when {

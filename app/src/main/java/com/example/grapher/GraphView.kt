@@ -476,6 +476,14 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return cycles.size
     }
 
+    fun constructPower(){
+        var powerGraph = PowerGraph.constructPowerGraph(graph)
+        for (edge: Edge<Node> in powerGraph.edgeSet()){
+            graphWithMemory.addEdge(edge)
+        }
+        redraw()
+    }
+
     fun exactDominatingSet(){
         val eds = ExactDominatingSet(graph)
         val nodes = eds.execute()
@@ -485,7 +493,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             }
         }
         redraw()
-        invalidate()
     }
 
     fun showCenterNode() : Boolean {

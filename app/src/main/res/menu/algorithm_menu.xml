@@ -163,6 +163,9 @@
     <item
         android:id="@+id/claw_deletion"
         android:title="Claw-free edge deletion"/>
+    <item
+        android:id="@+id/power"
+        android:title="Construct Power Graph"/>
 
 </menu>
 
