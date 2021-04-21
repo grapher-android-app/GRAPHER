@@ -8,6 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+<!-- Colors for night mode -->
+    <color name="button_color">#8FB68B</color>
+    <color name="switch_switched_clump">#B998DA</color>
+    <color name="switch_switched_line">#E5CBFF</color>
+
     <!-- The node colors for normal mode? maybe both -->
     <color name="node_in_edge_mode_unselected">#8EA4D6</color>
     <color name="node_in_edge_mode_selected">#496F5D</color>
