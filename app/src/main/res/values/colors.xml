@@ -8,7 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-<!-- Colors for night mode -->
+<!-- Colors for night mode buttons and switch -->
     <color name="button_color">#8FB68B</color>
     <color name="switch_switched_clump">#B998DA</color>
     <color name="switch_switched_line">#E5CBFF</color>
