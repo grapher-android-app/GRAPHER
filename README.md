@@ -2,6 +2,10 @@
 
 Welcome to GRAPHER, the graph drawing Android app!
 
+This is an Android app for graph drawing and editing, and comes with several built-in algorithms.
+
+The project is released as GPLv3
+
 # Origin
 The Android app for graph drawing and editing known as Grapher was designed and developed by
 Algoritmegruppen at UiB in the period of 2012-2015. After some time without maintenance the app
@@ -9,7 +13,7 @@ became outdated and lost functionality due to changes in the ever evolving world
 
 That's why the app was picked up again as a INF219 project to restore the lost
 functionality and make it compatible with new, modern Android devices. This is the home to the
-new and improved version, made clear from the now capitalized name.
+new and improved version, made clear by the now capitalized name.
 
 # Changes from the original app
 
