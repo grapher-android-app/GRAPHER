@@ -63,6 +63,10 @@ class GraphActivity : AppCompatActivity() {
                         else -> shortToast("Max flow $flow")
                     }
                 }
+                R.id.power -> {
+                    graphView.constructPower()
+                    shortToast("Power graph has been constructed")
+                }
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
@@ -80,7 +84,7 @@ class GraphActivity : AppCompatActivity() {
      * Generates a short toast
      * @param s string to display
      */
-    fun shortToast(toast : String) {
+    private fun shortToast(toast : String) {
         Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
     }
 }

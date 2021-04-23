@@ -60,6 +60,10 @@
                 android:id ="@+id/perf_code"
                 android:title ="Perfect code"
                 />
+            <item
+                android:id = "@+id/power"
+                android:title = "Power graph"
+                />
 
         </menu>
     </item>

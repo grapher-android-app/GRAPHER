@@ -1,9 +1,6 @@
 package com.example.grapher
 
-import algorithms.CenterInspector
-import algorithms.CycleInspector
-import algorithms.FlowInspector
-import algorithms.SpringLayout
+import algorithms.*
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -510,6 +507,19 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
         redraw()
         return flow.first
+    }
+
+    fun constructPower() {
+        val power = PowerGraph.constructPowerGraph(graph)
+        for (edge in power.edgeSet()) {
+            val u : Node = power.getEdgeSource(edge)
+            val v : Node = power.getEdgeTarget(edge)
+            if (!graph.containsEdge(u, v)) {
+                val powerEdge = Edge(u, v)
+                graphWithMemory.addEdge(powerEdge)
+            }
+        }
+        redraw()
     }
 
     /**
