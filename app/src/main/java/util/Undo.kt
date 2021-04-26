@@ -52,7 +52,9 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
             }
             // if the last action was delete -> re-add it
             else {
-                graph.addEdge(action.node, action.otherNode)
+                val edge = graph.addEdge(action.node, action.otherNode)
+                edge.setSource(action.node)
+                edge.setTarget(action.otherNode)
             }
         }
         hasChanged = true
