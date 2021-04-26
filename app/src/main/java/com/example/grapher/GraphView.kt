@@ -19,7 +19,6 @@ import org.jgrapht.graph.SimpleGraph
 import org.jgrapht.util.SupplierUtil
 import util.Coordinate
 import util.Undo
-import java.util.function.Supplier
 
 
 /**
@@ -82,7 +81,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     constructor(context: Context?, attrs: AttributeSet): this(context, attrs, 0)
 
     private var graphWithMemory = Undo(graph)
-
     private var layout : SpringLayout? = null
 
     private var prevPointerCount: Int = 0
@@ -90,6 +88,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
     private var transformMatrix: Matrix = Matrix()
     private var prevMatrix: Matrix = Matrix()
+
+    private var matrixScale: Float = 1F
+
+    private var errorMissRadius: Float = 3F
 
 
     init {
@@ -136,6 +138,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 node.setColor(marked_node_color)
             }
             if (selectedNodes.contains(node)) {
+                node.setColor(selected_node_color)
+            }
+            if (!nodeMode && selectedNode!=null && selectedNode==node){
                 node.setColor(selected_node_color)
             }
         }
@@ -204,6 +209,13 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
 
         for (v in graph.vertexSet()) {
+//            if (matrixScale<=errorMissRadius){
+//                vertexPaint.color = Color.GRAY
+//                canvas.drawCircle(
+//                        v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize()*3F/matrixScale, vertexPaint
+//                )
+//                vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected, null)
+//            }
             if (selectedNode!=null && selectedNode==v){
                 vertexPaint.color = v.getColor()
                 //vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected, null)
@@ -262,9 +274,15 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
     private fun hasSelectedNode(): Boolean = selectedNode!=null
 
-    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean = node.getCoordinate().subtract(
-            coordinate
-    ).length()<=node.getSize()*3
+    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean{
+        if (matrixScale<errorMissRadius){
+            return node.getCoordinate().subtract(coordinate).length()<= node.getSize()*errorMissRadius/matrixScale
+        }
+        else{
+            return node.getCoordinate().subtract(coordinate).length()<= node.getSize()
+        }
+    }
+
 
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
@@ -286,13 +304,19 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         refreshDrawableState()
     }
 
+    private fun removeEdge(u: Node, v: Node){
+        graphWithMemory.removeEdge(u,v)
+        unselectNode()
+        redraw()
+    }
+
     private fun moveNode(coordinate: Coordinate){
         selectedNode!!.setCoordinate(coordinate)
     }
 
     fun undo() : Boolean {
         val ret = graphWithMemory.undo()
-        invalidate()
+        redraw()
         return ret
     }
 
@@ -333,15 +357,16 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                         Log.d("OnSingleTapConfirmed", "Was Node")
                         val node = getNodeAtCoordinate(coordinate)!!
                         if (hasSelectedNode()){
-                            if (node==selectedNode){
+                            if (node==selectedNode){ // Unselect node
                                 Log.d("OnSingleTapConfirmed", "Unselected Node")
                                 unselectNode()
                             }
                             else{
-                                if (hasEdge(node)){
-                                    Log.d("OnSingleTapConfirmed", "Didn't add Edge")
+                                if (hasEdge(node)){ //Already edge between two selected nodes
+                                    removeEdge(selectedNode!!,node)
+                                    Log.d("OnSingleTapConfirmed", "Removed Edge")
                                 }
-                                else {
+                                else { //No edge
                                     addEdgeBetween(node)
                                     Log.d("OnSingleTapConfirmed", "Added Edge")
                                 }
@@ -415,6 +440,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                         )
                         transformMatrix.postRotate(diffAngle)
                         transformMatrix.postScale(scale, scale)
+                        matrixScale *= scale
                         transformMatrix.postTranslate(newCoords[0].getX(), newCoords[0].getY())
                         prevPointerCoords = newCoords
                     }
