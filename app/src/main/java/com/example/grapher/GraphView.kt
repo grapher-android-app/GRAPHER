@@ -14,9 +14,9 @@ import android.view.View
 import model.Edge
 import model.EdgeStyle
 import model.Node
+import org.jgrapht.GraphPath
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.graph.SimpleGraph
-import org.jgrapht.util.SupplierUtil
 import util.Coordinate
 import util.Undo
 
@@ -66,8 +66,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private var selectedNodes = HashSet<Node>()
     private var markedEdges = HashSet<Edge<Node>>()
 
-    private var n1 = Node(Coordinate.ORIGO)
-    private var n2 = Node(Coordinate.ZERO)
     private var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph({ Node(Coordinate.ORIGO) }, { Edge<Node>() }, false)
 
     private var gestureDetector: GestureDetector
@@ -140,6 +138,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             if (selectedNodes.contains(node)) {
                 node.setColor(selected_node_color)
             }
+            if (selectedNode!=null && selectedNode == node){
+                node.setColor(selected_node_color)
+            }
             if (!nodeMode && selectedNode!=null && selectedNode==node){
                 node.setColor(selected_node_color)
             }
@@ -182,13 +183,13 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             )
         }
 
+        //Handles Rotation, Zooming and Panning
         val m = matrix
         prevMatrix.set(m)
         m.preConcat(transformMatrix)
         canvas.setMatrix(m)
 
-
-
+        //Paint edges
         vertexPaint.setColor(selected_node_color)
         for (e in graph.edgeSet()) {
             val source = e.getSource()
@@ -207,7 +208,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             edgePaint.color = e.getColor()
             canvas.drawLine(x1, y1, x2, y2, edgePaint)
         }
-
+        //Paint nodes
         for (v in graph.vertexSet()) {
 //            if (matrixScale<=errorMissRadius){
 //                vertexPaint.color = Color.GRAY
@@ -263,7 +264,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private fun selectNode(node: Node){
         selectedNode = node
         redraw()
-        refreshDrawableState()
+//        refreshDrawableState()
     }
 
     private fun unselectNode(){
@@ -305,7 +306,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     private fun removeEdge(u: Node, v: Node){
-        graphWithMemory.removeEdge(u,v)
+        graphWithMemory.removeEdge(u, v)
         unselectNode()
         redraw()
     }
@@ -341,7 +342,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             if (e != null){
                 prevPointerCoords = null
-                val coordinate = translateCoordinate(Coordinate(e.x,e.y))
+                val coordinate = translateCoordinate(Coordinate(e.x, e.y))
                 if (nodeMode){
                     if (!hasNode(coordinate)){
                         Log.d("OnSingleTapConfirmed", "Added Node")
@@ -363,7 +364,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                             }
                             else{
                                 if (hasEdge(node)){ //Already edge between two selected nodes
-                                    removeEdge(selectedNode!!,node)
+                                    removeEdge(selectedNode!!, node)
                                     Log.d("OnSingleTapConfirmed", "Removed Edge")
                                 }
                                 else { //No edge
@@ -403,7 +404,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 distanceY: Float
         ): Boolean {
             if (e1!=null && e2!=null){
-                Log.d("POINTERCOUNT","POINTER COUNT IS ${e2.pointerCount}")
+                //Log.d("POINTERCOUNT", "POINTER COUNT IS ${e2.pointerCount}")
                 if (e2.pointerCount==1){
                     prevPointerCoords = null
                     if (nodeMode) {
@@ -555,6 +556,47 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
         redraw()
         return flow.first
+    }
+
+    fun showHamiltonianPath(graphActivity: GraphActivity) {
+        val hamPathAlgo: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
+        val algoWrapper: AlgoWrapper<GraphPath<Node, Edge<Node>>>
+        hamPathAlgo = HamiltonianPathInspector(graph)
+        algoWrapper = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamPathAlgo) {
+            override fun resultText(result: GraphPath<Node, Edge<Node>>?): String {
+                clearAll()
+                return if (result == null) {
+                    "No hamiltonian path"
+                } else {
+                    markedEdges.addAll(result.edgeList)
+                    redraw()
+                    "Hamiltonian path"
+                }
+            }
+        }
+        algoWrapper.setTitle("Computing hamiltonian path ...")
+        algoWrapper.execute()
+    }
+
+    fun showHamiltonianCycle(graphActivity: GraphActivity) {
+        val hamcyc: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
+        val alg: AlgoWrapper<GraphPath<Node, Edge<Node>>>
+        hamcyc = HamiltonianCycleInspector(graph)
+        alg = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamcyc) {
+            override fun resultText(result: GraphPath<Node, Edge<Node>>?): String {
+                clearAll()
+                return if (result == null) {
+                    redraw()
+                    "Not hamiltonian."
+                } else {
+                    markedEdges.addAll(result.edgeList)
+                    redraw()
+                    "Graph is hamiltonian"
+                }
+            }
+        }
+        alg.setTitle("Computing hamiltonian cycle ...")
+        alg.execute()
     }
 
     /**
