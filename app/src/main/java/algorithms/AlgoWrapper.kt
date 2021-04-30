@@ -65,14 +65,14 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
     override fun onProgressUpdate(vararg values: Integer?) {
         for (progress : Integer? in values) {
             if (progress != null) {
-                pDialog.setProgress(progress.toInt())
+                pDialog.progress = progress.toInt()
             }
         }
     }
 
     private fun setUpProgressDialog() {
         pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        pDialog.setIndeterminate(false)
+        pDialog.isIndeterminate = false
         pDialog.setCancelable(false)
         pDialog.setTitle("Computing...")
 

@@ -12,7 +12,7 @@ import java.util.*
 class HamiltonianPathInspector<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, GraphPath<V, E>?>(graph) {
     private val isPotentiallyYesInstance: Boolean
         private get() {
-            if (!ConnectivityInspector<V, E>(graph).isConnected()) return false
+            if (!ConnectivityInspector<V, E>(graph).isConnected) return false
             if (graph==null){
                 return false
             }

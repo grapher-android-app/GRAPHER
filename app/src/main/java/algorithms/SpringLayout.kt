@@ -29,12 +29,6 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
         const val MAX_MOVEMENT : Float = 50f
     }
 
-    // placeholder for not functional edge-supplier
-    private var s1 = SpringNode(Node(Coordinate(0f, 0f)), 1)
-    private var s2 = SpringNode(Node(Coordinate(0f, 0f)), 2)
-//    private var edgeSup = Supplier { Edge(s1, s2) }
-//    private var layout : SimpleGraph<SpringNode, Edge<SpringNode>> =
-//            SimpleGraph(null, edgeSup, false)
     private var layout : SimpleGraph<SpringNode, Edge<SpringNode>> = SimpleGraph(SpringSupplier(), Supplier{ Edge<SpringNode>() }, false)
 
     var nodeToComponent = HashMap<Node, Int>()

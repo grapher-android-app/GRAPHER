@@ -92,6 +92,12 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private var errorMissRadius: Float = 3F
 
 
+
+
+
+
+
+
     init {
         gestureListener = MyGestureListener()
         gestureDetector = GestureDetector(getContext(), gestureListener, handler)
@@ -172,16 +178,16 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         edgePaint.strokeWidth = 5F
         edgePaint.style = Paint.Style.STROKE
 
-        if (prevPointerCoords!=null) {
-            vertexPaint.setColor(Color.RED)
-            canvas.drawCircle(
-                    prevPointerCoords!![0].getX(), prevPointerCoords!![0].getY(), 15F, vertexPaint
-            )
-            vertexPaint.setColor(Color.BLUE)
-            canvas.drawCircle(
-                    prevPointerCoords!![1].getX(), prevPointerCoords!![1].getY(), 15F, vertexPaint
-            )
-        }
+//        if (prevPointerCoords!=null) {
+//            vertexPaint.setColor(Color.RED)
+//            canvas.drawCircle(
+//                    prevPointerCoords!![0].getX(), prevPointerCoords!![0].getY(), 15F, vertexPaint
+//            )
+//            vertexPaint.setColor(Color.BLUE)
+//            canvas.drawCircle(
+//                    prevPointerCoords!![1].getX(), prevPointerCoords!![1].getY(), 15F, vertexPaint
+//            )
+//        }
 
         //Handles Rotation, Zooming and Panning
         val m = matrix
@@ -190,7 +196,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         canvas.setMatrix(m)
 
         //Paint edges
-        vertexPaint.setColor(selected_node_color)
+        vertexPaint.color = selected_node_color
         for (e in graph.edgeSet()) {
             val source = e.getSource()
             val target = e.getTarget()
@@ -447,10 +453,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                     }
                 } else { // 3 or more
                     prevPointerCoords = null
-                    prevPointerCount=e2.pointerCount;
+                    prevPointerCount=e2.pointerCount
                     return false
                 }
-                prevPointerCount=e2.pointerCount;
+                prevPointerCount=e2.pointerCount
                 invalidate()
                 return true
             }

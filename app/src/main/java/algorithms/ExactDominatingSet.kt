@@ -33,15 +33,7 @@ class ExactDominatingSet<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, Coll
     }
 
     fun execute(cc: SimpleGraph<V, E>): HashSet<V>? {
-//        val gg = SimpleGraph<VertexDominated<V>,EdgeDominated>(Supplier { VertexDominated(null) }, Supplier { EdgeDominated() })
         val g = SimpleGraph<VertexDominated<V>,EdgeDominated>(EdgeDominated::class.java)
-
-//        val g = SimpleGraph<VertexDominated<V>?, EdgeDominated>(
-//                object : EdgeFactory<VertexDominated<V>?, EdgeDominated?>() {
-//                    fun createEdge(arg0: VertexDominated<V>?, arg1: VertexDominated<V>?): EdgeDominated {
-//                        return EdgeDominated()
-//                    }
-//                })
         val map = HashMap<V, VertexDominated<V>>()
         for (v in cc.vertexSet()) {
             val vd = VertexDominated(v)
@@ -53,7 +45,7 @@ class ExactDominatingSet<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, Coll
         }
         val pi: PowersetIterator<VertexDominated<V>> = PowersetIterator<VertexDominated<V>>(g.vertexSet())
         var domset: Collection<VertexDominated<V>>? = null
-        progress(0, cc.vertexSet().size) // TODO doesn't work on >1 #cc
+        progress(0, cc.vertexSet().size)
         while (pi.hasNext()) {
             val current: Collection<VertexDominated<V>> = pi.next()
 

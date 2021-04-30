@@ -12,7 +12,7 @@ import kotlin.collections.HashMap
 object HamiltonianInspector {
     fun <V, E> getHamiltonianPath(
             graph: SimpleGraph<V?, E>): GraphPath<V, E>? {
-        val con: Boolean = ConnectivityInspector(graph).isConnected()
+        val con: Boolean = ConnectivityInspector(graph).isConnected
         if (!con) return null
         val n = graph.vertexSet().size
         val npow = Math.pow(2.0, n.toDouble()).toInt()
@@ -151,7 +151,7 @@ object HamiltonianInspector {
             graph: SimpleGraph<V, E>?): GraphPath<V, E>? {
         if (graph == null) throw NullPointerException("Input graph was null.")
         if (graph.vertexSet().size < 2) return null
-        val con: Boolean = ConnectivityInspector(graph).isConnected()
+        val con: Boolean = ConnectivityInspector(graph).isConnected
         if (!con) return null
         val pit = PermutationIterator(
                 graph.vertexSet())

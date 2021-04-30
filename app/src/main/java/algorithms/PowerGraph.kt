@@ -40,7 +40,6 @@ class PowerGraph {
             for(v in graph.vertexSet()){
                 val neighbors : Set<Node> = Neighbors.openNNeighborhood(graph, v, n)
                 for(u in neighbors) if(!power.containsEdge(v,u)) {
-                    //TODO gonna crash because supplier
                     val edge = power.addEdge(u,v)
                     edge.setSource(u)
                     edge.setTarget(v)

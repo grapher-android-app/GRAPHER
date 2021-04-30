@@ -60,5 +60,5 @@ abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?) {
         //TODO implement
     }
 
-    public abstract fun execute() : Return
+    abstract fun execute() : Return
 }

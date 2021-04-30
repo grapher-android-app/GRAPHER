@@ -18,7 +18,7 @@ class HamiltonianCycleInspector<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, 
         if (graph != null) {
             if (graph.vertexSet().size < 3) return null
         }
-        val con: Boolean = ConnectivityInspector<V, E>(graph).isConnected()
+        val con: Boolean = ConnectivityInspector<V, E>(graph).isConnected
         if (!con || !isPotentiallyYesInstance) return null
         val n: Int = graph!!.vertexSet().size
         val npow = Math.pow(2.0, n.toDouble()).toInt()
@@ -100,7 +100,7 @@ class HamiltonianCycleInspector<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, 
         // we test that there is a vertex adjacent to minDegreeVertex that has a
         // ham path ending in it
         val vertexSetId = collectionToId[graph.vertexSet()]!!
-        for (nabo in Neighbors.openNeighborhood(graph, minDegreeVertex!!)) {
+        for (nabo in Neighbors.openNeighborhood(graph, minDegreeVertex)) {
             val naboId = vertexToId[nabo]!!
             if (dp[naboId][vertexSetId]) {
                 // YES! there is a ham path from minDegree to a neighbor of it!
