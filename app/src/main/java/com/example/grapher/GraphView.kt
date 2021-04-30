@@ -13,11 +13,11 @@ import android.view.View
 import model.Edge
 import model.EdgeStyle
 import model.Node
+import org.jgrapht.GraphPath
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
-import java.util.function.Supplier
 
 
 /**
@@ -65,10 +65,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private var selectedNodes = HashSet<Node>()
     private var markedEdges = HashSet<Edge<Node>>()
 
-    private var n1 = Node(Coordinate.ORIGO)
-    private var n2 = Node(Coordinate.ZERO)
-    private var edgeSup = Supplier {Edge(n1, n2)}
-    private var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph(null, edgeSup, false)
+    private var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph({ Node(Coordinate.ORIGO) }, { Edge<Node>() }, false)
 
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
@@ -90,6 +87,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private var transformMatrix: Matrix = Matrix()
     private var prevMatrix: Matrix = Matrix()
 
+    private var matrixScale: Float = 1F
+
+    private var errorMissRadius: Float = 3F
 
     init {
         gestureListener = MyGestureListener()
@@ -137,6 +137,12 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             if (selectedNodes.contains(node)) {
                 node.setColor(selected_node_color)
             }
+            if (selectedNode!=null && selectedNode == node){
+                node.setColor(selected_node_color)
+            }
+            if (!nodeMode && selectedNode!=null && selectedNode==node){
+                node.setColor(selected_node_color)
+            }
         }
 
         for (edge: Edge<Node> in graph.edgeSet()) {
@@ -176,14 +182,14 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 //            )
 //        }
 
+        //Handles Rotation, Zooming and Panning
         val m = matrix
         prevMatrix.set(m)
         m.preConcat(transformMatrix)
         canvas.setMatrix(m)
 
-
-
-        vertexPaint.setColor(selected_node_color)
+        //Paint edges
+        vertexPaint.color = selected_node_color
         for (e in graph.edgeSet()) {
             val source = e.getSource()
             val target = e.getTarget()
@@ -201,10 +207,11 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             edgePaint.color = e.getColor()
             canvas.drawLine(x1, y1, x2, y2, edgePaint)
         }
-
+        //Paint nodes
         for (v in graph.vertexSet()) {
             if (selectedNode!=null && selectedNode==v){
-                vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected, null)
+                vertexPaint.color = v.getColor()
+                //vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected, null)
                 canvas.drawCircle(
                         v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint
                 )
@@ -249,7 +256,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private fun selectNode(node: Node){
         selectedNode = node
         redraw()
-        refreshDrawableState()
+//        refreshDrawableState()
     }
 
     private fun unselectNode(){
@@ -260,9 +267,15 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
     private fun hasSelectedNode(): Boolean = selectedNode!=null
 
-    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean = node.getCoordinate().subtract(
-            coordinate
-    ).length()<=node.getSize()*3
+    private fun isOnNode(coordinate: Coordinate, node: Node): Boolean{
+        if (matrixScale<errorMissRadius){
+            return node.getCoordinate().subtract(coordinate).length()<= node.getSize()*errorMissRadius/matrixScale
+        }
+        else{
+            return node.getCoordinate().subtract(coordinate).length()<= node.getSize()
+        }
+    }
+
 
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
@@ -276,12 +289,18 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private fun hasEdge(node: Node): Boolean = graph.containsEdge(selectedNode, node)
 
     private fun addEdgeBetween(node: Node){
-        val edge = Edge(selectedNode!!, node)
-        graphWithMemory.addEdge(selectedNode!!, node, edge)
+//        val edge = Edge(selectedNode!!, node)
+        graphWithMemory.addEdge(selectedNode!!, node)
         Log.d("EDGE ADDED", graph.toString())
         unselectNode()
         redraw()
         refreshDrawableState()
+    }
+
+    private fun removeEdge(u: Node, v: Node){
+        graphWithMemory.removeEdge(u, v)
+        unselectNode()
+        redraw()
     }
 
     private fun moveNode(coordinate: Coordinate){
@@ -290,7 +309,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
     fun undo() : Boolean {
         val ret = graphWithMemory.undo()
-        invalidate()
+        redraw()
         return ret
     }
 
@@ -315,7 +334,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             if (e != null){
                 prevPointerCoords = null
-                val coordinate = translateCoordinate(Coordinate(e.x,e.y))
+                val coordinate = translateCoordinate(Coordinate(e.x, e.y))
                 if (nodeMode){
                     if (!hasNode(coordinate)){
                         Log.d("OnSingleTapConfirmed", "Added Node")
@@ -331,15 +350,16 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                         Log.d("OnSingleTapConfirmed", "Was Node")
                         val node = getNodeAtCoordinate(coordinate)!!
                         if (hasSelectedNode()){
-                            if (node==selectedNode){
+                            if (node==selectedNode){ // Unselect node
                                 Log.d("OnSingleTapConfirmed", "Unselected Node")
                                 unselectNode()
                             }
                             else{
-                                if (hasEdge(node)){
-                                    Log.d("OnSingleTapConfirmed", "Didn't add Edge")
+                                if (hasEdge(node)){ //Already edge between two selected nodes
+                                    removeEdge(selectedNode!!, node)
+                                    Log.d("OnSingleTapConfirmed", "Removed Edge")
                                 }
-                                else {
+                                else { //No edge
                                     addEdgeBetween(node)
                                     Log.d("OnSingleTapConfirmed", "Added Edge")
                                 }
@@ -412,15 +432,16 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                         )
                         transformMatrix.postRotate(diffAngle)
                         transformMatrix.postScale(scale, scale)
+                        matrixScale *= scale
                         transformMatrix.postTranslate(newCoords[0].getX(), newCoords[0].getY())
                         prevPointerCoords = newCoords
                     }
                 } else { // 3 or more
                     prevPointerCoords = null
-                    prevPointerCount=e2.pointerCount;
+                    prevPointerCount=e2.pointerCount
                     return false
                 }
-                prevPointerCount=e2.pointerCount;
+                prevPointerCount=e2.pointerCount
                 invalidate()
                 return true
             }
@@ -473,6 +494,25 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return cycles.size
     }
 
+    fun constructPower(){
+        var powerGraph = PowerGraph.constructPowerGraph(graph)
+        for (edge: Edge<Node> in powerGraph.edgeSet()){
+            graphWithMemory.addEdge(edge)
+        }
+        redraw()
+    }
+
+    fun exactDominatingSet(){
+        val eds = ExactDominatingSet(graph)
+        val nodes = eds.execute()
+        if (nodes != null) {
+            for (node in nodes){
+                highlightedNodes.add(node)
+            }
+        }
+        redraw()
+    }
+
     fun showCenterNode() : Boolean {
         clearAll()
         redraw()
@@ -509,17 +549,45 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return flow.first
     }
 
-    fun constructPower() {
-        val power = PowerGraph.constructPowerGraph(graph)
-        for (edge in power.edgeSet()) {
-            val u : Node = power.getEdgeSource(edge)
-            val v : Node = power.getEdgeTarget(edge)
-            if (!graph.containsEdge(u, v)) {
-                val powerEdge = Edge(u, v)
-                graphWithMemory.addEdge(powerEdge)
+    fun showHamiltonianPath(graphActivity: GraphActivity) {
+        val hamPathAlgo: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
+        val algoWrapper: AlgoWrapper<GraphPath<Node, Edge<Node>>>
+        hamPathAlgo = HamiltonianPathInspector(graph)
+        algoWrapper = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamPathAlgo) {
+            override fun resultText(result: GraphPath<Node, Edge<Node>>?): String {
+                clearAll()
+                return if (result == null) {
+                    "No hamiltonian path"
+                } else {
+                    markedEdges.addAll(result.edgeList)
+                    redraw()
+                    "Hamiltonian path"
+                }
             }
         }
-        redraw()
+        algoWrapper.setTitle("Computing hamiltonian path ...")
+        algoWrapper.execute()
+    }
+
+    fun showHamiltonianCycle(graphActivity: GraphActivity) {
+        val hamcyc: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
+        val alg: AlgoWrapper<GraphPath<Node, Edge<Node>>>
+        hamcyc = HamiltonianCycleInspector(graph)
+        alg = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamcyc) {
+            override fun resultText(result: GraphPath<Node, Edge<Node>>?): String {
+                clearAll()
+                return if (result == null) {
+                    redraw()
+                    "Not hamiltonian."
+                } else {
+                    markedEdges.addAll(result.edgeList)
+                    redraw()
+                    "Graph is hamiltonian"
+                }
+            }
+        }
+        alg.setTitle("Computing hamiltonian cycle ...")
+        alg.execute()
     }
 
     /**

@@ -11,7 +11,7 @@ class EulerianInspector {
                 println(g!!) //this will throw nullpointerexception if null
             }
 
-            for(v: V in g!!.vertexSet()){
+            for(v: V in g.vertexSet()){
                 if(g.edgesOf(v).size % 2 != 0){
                     return false
                 }
@@ -25,7 +25,7 @@ class EulerianInspector {
             }
             var odds  = HashSet<V>(g.vertexSet().size)
 
-            for(v: V in g!!.vertexSet()){
+            for(v: V in g.vertexSet()){
                 if(g.edgesOf(v).size % 2 != 0){
                     odds.add(v)
                 }

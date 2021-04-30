@@ -52,7 +52,7 @@ class BipartiteInspector {
                     }
                 }
             }
-            return a;
+            return a
         }
 
 
