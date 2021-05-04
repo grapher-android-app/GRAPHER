@@ -41,9 +41,18 @@ class BipartiteInspector {
                     if(a.contains(current)){
                         for(e: E in graph.edgesOf(current)){
                             val u: V = opposite(graph, e, current)
-                            if(b.contains(u)){
+                            if(a.contains(u)){
                                 return null
                             }
+                            b.add(u)
+                            if(notProcessed.contains(u)){
+                                fringe.add(u)
+                            }
+                        }
+                    } else if (b.contains(current)){
+                        for(e: E in graph.edgesOf(current)) {
+                            val u: V = opposite(graph, e, current)
+                            if(b.contains(u)) return null
                             a.add(u)
                             if(notProcessed.contains(u)){
                                 fringe.add(u)

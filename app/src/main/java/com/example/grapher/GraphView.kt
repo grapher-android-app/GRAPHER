@@ -54,12 +54,12 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private val vertexPaint = Paint()
 
     // colors used for different types of nodes and edges
-    private val def_node_color : Int = resources.getColor(R.color.teal_700, null)
-    private val marked_node_color : Int = resources.getColor(R.color.teal_200, null)
+    private val def_node_color : Int = resources.getColor(R.color.node_color_standard, null)
+    private val marked_node_color : Int = resources.getColor(R.color.node_in_edge_mode_selected, null)
     private val selected_node_color : Int = resources.getColor(R.color.purple_200, null)
-    private val touched_node_color : Int = resources.getColor(R.color.node_color_standard, null)
-    private val def_edge_color : Int = resources.getColor(R.color.purple_500, null)
-    private val marked_edge_color : Int = resources.getColor(R.color.purple_700, null)
+    private val touched_node_color : Int = resources.getColor(R.color.node_in_edge_mode_unselected, null)
+    private val def_edge_color : Int = resources.getColor(R.color.edge_in_edge_mode, null)
+    private val marked_edge_color : Int = resources.getColor(R.color.edge_color_path, null)
 
     private var highlightedNodes = HashSet<Node>()
     private var selectedNodes = HashSet<Node>()
@@ -520,6 +520,14 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         highlightedNodes.add(center)
         redraw()
         return true
+    }
+
+    fun isBipartite(): Boolean{
+        return BipartiteInspector.isBipartite(graph)
+    }
+
+    fun isEulerian(): Boolean {
+        return EulerianInspector.isEulerian(graph)
     }
 
     fun showFlow() : Int {

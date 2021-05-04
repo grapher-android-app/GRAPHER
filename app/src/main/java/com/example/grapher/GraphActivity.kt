@@ -1,10 +1,12 @@
 package com.example.grapher
 
+import algorithms.AlgoWrapper
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import model.Node
+import org.jgrapht.Graph
 
 /** AppCompatActivity replaces Activity in this library */
 class GraphActivity : AppCompatActivity() {
@@ -14,6 +16,8 @@ class GraphActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_graph)
         Node.resetCounter()
+
+
 
         //Changes the name of the mode you are in
         graphView = findViewById<GraphView>(R.id.graphView)
@@ -43,7 +47,10 @@ class GraphActivity : AppCompatActivity() {
     //Maybe put this into a class later, but for now, its a menu :D
     private fun showPopUp(view: View){
         val popMenu = PopupMenu(this, view)
+        var progressDialog = ProgressDialog(this)
+
         popMenu.inflate(R.menu.algorithm_menu)
+
 
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -51,6 +58,10 @@ class GraphActivity : AppCompatActivity() {
                 R.id.show_center -> {
                     var conn : Boolean = graphView.showCenterNode()
                     // TODO create easy toast feedback
+
+                    progressDialog.startProgressDialog()
+
+
                 }
                 R.id.compute_cycle_4 -> {
                     graphView.showAllCycle4()
@@ -79,6 +90,20 @@ class GraphActivity : AppCompatActivity() {
                     graphView.constructPower()
                     shortToast("Power graph has been constructed")
                 }
+                R.id.bipartition -> {
+                    val bip = graphView.isBipartite()
+                    when{
+                    bip -> shortToast("Graph is bipartite ")
+                    else -> shortToast("Graph is not bipartite")
+                    }
+                }
+                R.id.test_eulerian -> {
+                    val eulerian = graphView.isEulerian()
+                    when{
+                        eulerian -> shortToast("Graph is Eulerian ")
+                        else -> shortToast("Graph is not Eulerian")
+                    }
+                }
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
@@ -99,4 +124,5 @@ class GraphActivity : AppCompatActivity() {
     private fun shortToast(toast : String) {
         Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
     }
+
 }
