@@ -2,10 +2,12 @@ name: Android CI
 
 on:
   push:
-    tags: 'v*'
+    tags: 
+    - 'v*'
     branches: [ master ]
   pull_request:
-    tags: 'v*'
+    tags: 
+    - 'v*'
     branches: [ master ]
 
 jobs:
