@@ -32,9 +32,9 @@ jobs:
         uses: sparkfabrik/android-build-action@v1.0.0
         with:
           # Project path
-          project-path: android
+          project-path: ./
           # Output path of apk
-          output-path: GRAPHER.apk # optional, default is output.apk
+          output-path: ./apk/GRAPHER.apk # optional, default is output.apk
           # Name of the gradle task to exec
           ## gradle-task: # optional, default is assembleDebug
           # Boolean to tell the Action to upload the .ipa to Browserstack App Live after the build.
