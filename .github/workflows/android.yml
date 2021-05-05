@@ -36,7 +36,7 @@ jobs:
         # Project path
         project-path: ./
         # Output path of apk
-        output-path: GRAPHER.apk
+        output-path: ./GRAPHER.apk
         # optional, default is output.apk
         # Name of the gradle task to exec
         ##gradle-task: 
