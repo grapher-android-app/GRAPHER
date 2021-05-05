@@ -5,6 +5,7 @@ on:
     tags: 'v*'
     branches: [ master ]
   pull_request:
+    tags: 'v*'
     branches: [ master ]
 
 jobs:
