@@ -32,7 +32,7 @@ jobs:
         uses: sparkfabrik/android-build-action@v1.0.0
         with:
           # Project path
-          project-path: .
+          project-path: ..
           # Output path of apk
           output-path: ./apk/GRAPHER.apk # optional, default is output.apk
           # Name of the gradle task to exec
