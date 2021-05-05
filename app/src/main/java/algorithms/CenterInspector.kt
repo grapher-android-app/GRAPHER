@@ -1,7 +1,5 @@
 package algorithms
 
-import model.Edge
-import model.Node
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.alg.shortestpath.FloydWarshallShortestPaths
 import org.jgrapht.graph.SimpleGraph
