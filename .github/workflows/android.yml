@@ -3,11 +3,11 @@ name: Android CI
 on:
   push:
     tags: 
-    - 'v*'
+      - 'v*'
     branches: [ master ]
   pull_request:
     tags: 
-    - 'v*'
+      - 'v*'
     branches: [ master ]
 
 jobs:
