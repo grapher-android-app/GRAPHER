@@ -5,15 +5,25 @@ import settings.Geometric
 import util.Coordinate
 import java.io.Serializable
 
-class Edge<V>(private val source: V, private val target: V) : Colorful, Geometric, Serializable{
+class Edge<V>: Colorful, Geometric, Serializable{
     companion object {
         private const val serialVersionUID = 1L
     }
     private var color: Int = 0
-    private lateinit var style: EdgeStyle
+    private var style: EdgeStyle = EdgeStyle.SOLID
 
     private lateinit var coordinate: Coordinate
 
+    private var source: V? = null
+    private var target: V? = null
+
+    fun setSource(s: V){
+        source = s
+    }
+
+    fun setTarget(t: V){
+        target = t
+    }
 
     override fun getColor(): Int {
         return color
@@ -45,12 +55,12 @@ class Edge<V>(private val source: V, private val target: V) : Colorful, Geometri
 
     fun getOpposite(vertex: V?): V? {
         if (source != null) {
-            if (source.equals(vertex)){
+            if (source!!.equals(vertex)){
                 return target
             }
         }
         if (target != null) {
-            if (target.equals(vertex)){
+            if (target!!.equals(vertex)){
                 return source
             }
         }
@@ -58,11 +68,11 @@ class Edge<V>(private val source: V, private val target: V) : Colorful, Geometri
     }
 
     fun getSource(): V {
-        return source
+        return source!!
     }
 
     fun getTarget(): V {
-        return target
+        return target!!
     }
 
     override fun toString(): String {

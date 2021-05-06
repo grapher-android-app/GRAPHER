@@ -9,7 +9,7 @@ import com.example.grapher.GraphView
 import model.Edge
 import model.Node
 
-abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : Algorithm<Node, Edge<Node>, Result>)
+abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : Algorithm<Node, Edge<Node>, Result?>)
     : AsyncTask<Void, Integer, Result>() {
 
     var pDialog : ProgressDialog = ProgressDialog(activity)
@@ -18,7 +18,7 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
         setUpProgressDialog()
     }
 
-    constructor(activity: GraphActivity, algorithm: Algorithm<Node, Edge<Node>, Result>, progressTitle: String)
+    constructor(activity: GraphActivity, algorithm: Algorithm<Node, Edge<Node>, Result?>, progressTitle: String)
         : this(activity, algorithm) {
         pDialog.setTitle(progressTitle)
 
@@ -33,7 +33,7 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
         GraphView.time(false)
     }
 
-    override fun doInBackground(vararg params: Void?): Result {
+    override fun doInBackground(vararg params: Void?): Result? {
         GraphView.time(true)
         return algorithm.execute()
     }
@@ -48,7 +48,7 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
         }
     }
 
-    abstract fun resultText(result: Result) : String
+    abstract fun resultText(result: Result?) : String
 
     override fun onPostExecute(result: Result) {
         pDialog.dismiss()
@@ -65,14 +65,14 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
     override fun onProgressUpdate(vararg values: Integer?) {
         for (progress : Integer? in values) {
             if (progress != null) {
-                pDialog.setProgress(progress.toInt())
+                pDialog.progress = progress.toInt()
             }
         }
     }
 
     private fun setUpProgressDialog() {
         pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        pDialog.setIndeterminate(false)
+        pDialog.isIndeterminate = false
         pDialog.setCancelable(false)
         pDialog.setTitle("Computing...")
 
