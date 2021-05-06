@@ -54,12 +54,15 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     private val vertexPaint = Paint()
 
     // colors used for different types of nodes and edges
-    val def_node_color : Int = resources.getColor(R.color.node_color_standard, null)
-    private val marked_node_color : Int = resources.getColor(R.color.node_in_edge_mode_selected, null)
-    private val selected_node_color : Int = resources.getColor(R.color.purple_200, null)
-    private val touched_node_color : Int = resources.getColor(R.color.node_in_edge_mode_unselected, null)
-    private val def_edge_color : Int = resources.getColor(R.color.edge_in_edge_mode, null)
+    val node_mode_node_color : Int = resources.getColor(R.color.node_color_standard, null)
+    val node_mode_edge_color : Int = resources.getColor(R.color.edge_in_node_mode, null)
+
+    private val edge_mode_node_color : Int = resources.getColor(R.color.node_in_edge_mode_unselected, null)
+    private val edge_mode_edge_color : Int = resources.getColor(R.color.edge_in_edge_mode, null)
+
     private val marked_edge_color : Int = resources.getColor(R.color.edge_color_path, null)
+    private val marked_node_color : Int = resources.getColor(R.color.marked_node_after_algorithm, null)
+    private val selected_node_color : Int = resources.getColor(R.color.purple_200, null)
 
     private var highlightedNodes = HashSet<Node>()
     var selectedNodes = HashSet<Node>()
@@ -117,7 +120,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         if (graph.vertexSet() == null)  return
 
         for (node : Node in graph.vertexSet()) {
-            node.setColor(if (nodeMode) def_node_color else touched_node_color)
+            node.setColor(if (nodeMode) node_mode_node_color else edge_mode_node_color)
             if (highlightedNodes.contains(node)) {
                 node.setColor(marked_node_color)
             }
@@ -133,9 +136,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
 
         for (edge: Edge<Node> in graph.edgeSet()) {
-            edge.setColor(def_edge_color)
+            edge.setColor(if (nodeMode) node_mode_edge_color else edge_mode_edge_color)
             if (markedEdges.contains(edge)) {
                 edge.setStyle(EdgeStyle.BOLD)
+                edge.setColor(marked_edge_color)
             }
             else {
                 edge.setStyle(EdgeStyle.SOLID)
@@ -177,31 +181,23 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             val x2 = target.getCoordinate().getX()
             val y2 = target.getCoordinate().getY()
 
+            edgePaint.color = e.getColor()
+
             if (e.getStyle() == EdgeStyle.BOLD) {
-                edgePaint.color = marked_edge_color
-                edgePaint.strokeWidth = 10F
+                edgePaint.strokeWidth = 15F
                 canvas.drawLine(x1, y1, x2, y2, edgePaint)
                 edgePaint.strokeWidth = 5F
             }
-            edgePaint.color = e.getColor()
-            canvas.drawLine(x1, y1, x2, y2, edgePaint)
+            else{
+                canvas.drawLine(x1, y1, x2, y2, edgePaint)
+            }
         }
         //Paint nodes
         for (v in graph.vertexSet()) {
-            if (selectedNode!=null && selectedNode==v){
-                vertexPaint.color = v.getColor()
-                //vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_selected, null)
-                canvas.drawCircle(
-                        v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint
-                )
-                vertexPaint.color = resources.getColor(R.color.node_in_edge_mode_unselected, null)
-            }
-            else {
-                vertexPaint.color = v.getColor()
-                canvas.drawCircle(
-                        v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint
-                )
-            }
+            vertexPaint.color = v.getColor()
+            canvas.drawCircle(
+                    v.getCoordinate().getX(), v.getCoordinate().getY(), v.getSize(), vertexPaint
+            )
         }
         canvas.setMatrix(prevMatrix)
     }

@@ -5,9 +5,7 @@ import android.graphics.Matrix
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
-import model.Edge
 import model.Node
-import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
 
@@ -16,7 +14,7 @@ class GraphViewController(var graphView: GraphView) {
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
 
-    private var selectedNode = graphView.selectedNode
+//    private var selectedNode = graphView.selectedNode
 
     private var graph = graphView.graph
 
@@ -58,7 +56,7 @@ class GraphViewController(var graphView: GraphView) {
     }
 
     fun addNode(coordinate: Coordinate) {
-        val vertex = Node(graphView.def_node_color, coordinate)
+        val vertex = Node(graphView.node_mode_node_color, coordinate)
         graphWithMemory.addVertex(vertex)
         Log.d("NODE ADDED", graph.toString())
         invalidate()
@@ -80,18 +78,18 @@ class GraphViewController(var graphView: GraphView) {
     }
 
     private fun selectNode(node: Node){
-        selectedNode = node
+        graphView.selectedNode = node
         redraw()
         refreshDrawableState()
     }
 
     private fun unselectNode(){
-        selectedNode = null
+        graphView.selectedNode = null
         redraw()
         refreshDrawableState()
     }
 
-    private fun hasSelectedNode(): Boolean = selectedNode!=null
+    private fun hasSelectedNode(): Boolean = graphView.selectedNode!=null
 
     private fun isOnNode(coordinate: Coordinate, node: Node): Boolean{
         if (matrixScale<errorMissRadius){
@@ -102,11 +100,11 @@ class GraphViewController(var graphView: GraphView) {
         }
     }
 
-    private fun hasEdge(node: Node): Boolean = graph.containsEdge(selectedNode, node)
+    private fun hasEdge(node: Node): Boolean = graph.containsEdge(graphView.selectedNode, node)
 
     private fun addEdgeBetween(node: Node){
 //        val edge = Edge(selectedNode!!, node)
-        graphWithMemory.addEdge(selectedNode!!, node)
+        graphWithMemory.addEdge(graphView.selectedNode!!, node)
         Log.d("EDGE ADDED", graph.toString())
         unselectNode()
         redraw()
@@ -120,7 +118,7 @@ class GraphViewController(var graphView: GraphView) {
     }
 
     private fun moveNode(coordinate: Coordinate){
-        selectedNode!!.setCoordinate(coordinate)
+        graphView.selectedNode!!.setCoordinate(coordinate)
     }
 
     private fun redraw(){
@@ -184,13 +182,13 @@ class GraphViewController(var graphView: GraphView) {
                         Log.d("OnSingleTapConfirmed", "Was Node")
                         val node = getNodeAtCoordinate(coordinate)!!
                         if (hasSelectedNode()){
-                            if (node==selectedNode){ // Unselect node
+                            if (node==graphView.selectedNode){ // Unselect node
                                 Log.d("OnSingleTapConfirmed", "Unselected Node")
                                 unselectNode()
                             }
                             else{
                                 if (hasEdge(node)){ //Already edge between two selected nodes
-                                    removeEdge(selectedNode!!, node)
+                                    removeEdge(graphView.selectedNode!!, node)
                                     Log.d("OnSingleTapConfirmed", "Removed Edge")
                                 }
                                 else { //No edge
