@@ -11,6 +11,7 @@ import org.jgrapht.Graph
 /** AppCompatActivity replaces Activity in this library */
 class GraphActivity : AppCompatActivity() {
     private lateinit var graphView: GraphView
+    private lateinit var graphViewController: GraphViewController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -21,6 +22,7 @@ class GraphActivity : AppCompatActivity() {
 
         //Changes the name of the mode you are in
         graphView = findViewById<GraphView>(R.id.graphView)
+        graphViewController= GraphViewController(graphView)
         val switchMode = findViewById<Switch>(R.id.mode_switch)
         switchMode?.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
@@ -34,7 +36,7 @@ class GraphActivity : AppCompatActivity() {
         }
         val shakeButton = findViewById<Button>(R.id.shake_button)
         shakeButton?.setOnClickListener {
-            graphView.shake()
+            graphViewController.shake()
         }
 
         val hamburgerButton = findViewById<Button>(R.id.hamburger)
@@ -47,7 +49,7 @@ class GraphActivity : AppCompatActivity() {
     //Maybe put this into a class later, but for now, its a menu :D
     private fun showPopUp(view: View){
         val popMenu = PopupMenu(this, view)
-        var progressDialog = ProgressDialog(this)
+//        var progressDialog = ProgressDialog(this)
 
         popMenu.inflate(R.menu.algorithm_menu)
 
@@ -59,7 +61,7 @@ class GraphActivity : AppCompatActivity() {
                     var conn : Boolean = graphView.showCenterNode()
                     // TODO create easy toast feedback
 
-                    progressDialog.startProgressDialog()
+//                    progressDialog.startProgressDialog()
 
 
                 }
@@ -112,7 +114,7 @@ class GraphActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (!graphView.undo()) {
+        if (!graphViewController.undo()) {
             super.onBackPressed()
         }
     }
