@@ -11,7 +11,7 @@ import java.util.*
 
 class HamiltonianPathInspector<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, GraphPath<V, E>?>(graph) {
     private val isPotentiallyYesInstance: Boolean
-        private get() {
+        get() {
             if (!ConnectivityInspector<V, E>(graph).isConnected) return false
             if (graph==null){
                 return false
@@ -30,7 +30,7 @@ class HamiltonianPathInspector<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E
             return true
         }
 
-    override fun execute(): GraphPath<V, E>? {
+    override fun call(): GraphPath<V, E>? {
         if (!isPotentiallyYesInstance) return null
         val n: Int = graphSize()
         val npow = Math.pow(2.0, n.toDouble()).toInt()
