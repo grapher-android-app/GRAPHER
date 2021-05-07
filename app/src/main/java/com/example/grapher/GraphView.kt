@@ -229,7 +229,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun constructPower(){
-        var powerGraph = PowerGraph.constructPowerGraph(graph)
+        val powerGraph = PowerGraph.constructPowerGraph(graph)
         for (edge: Edge<Node> in powerGraph.edgeSet()){
             graphWithMemory.addEdge(edge)
         }
@@ -238,7 +238,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
     fun exactDominatingSet(){
         val eds = ExactDominatingSet(graph)
-        val nodes = eds.execute()
+        val nodes = eds.call()
         if (nodes != null) {
             for (node in nodes){
                 highlightedNodes.add(node)
@@ -307,15 +307,15 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 }
             }
         }
-        algoWrapper.setTitle("Computing hamiltonian path ...")
-        algoWrapper.execute()
+        //algoWrapper.setTitle("Computing hamiltonian path ...")
+        Thread{algoWrapper.run()}.start()
     }
 
     fun showHamiltonianCycle(graphActivity: GraphActivity) {
         val hamcyc: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
-        val alg: AlgoWrapper<GraphPath<Node, Edge<Node>>>
+        val algoWrapper: AlgoWrapper<GraphPath<Node, Edge<Node>>>
         hamcyc = HamiltonianCycleInspector(graph)
-        alg = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamcyc) {
+        algoWrapper = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamcyc) {
             override fun resultText(result: GraphPath<Node, Edge<Node>>?): String {
                 clearAll()
                 return if (result == null) {
@@ -328,10 +328,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 }
             }
         }
-        alg.setTitle("Computing hamiltonian cycle ...")
-        alg.execute()
+        algoWrapper.setTitle("Computing hamiltonian cycle ...")
+        //this is ugly but runs the progressbar in a new thread
+        Thread{algoWrapper.run()}.start()
     }
-
     /**
      * Catch all method to call when reset graph to default representation
      */

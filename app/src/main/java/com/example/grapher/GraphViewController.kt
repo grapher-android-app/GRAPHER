@@ -35,7 +35,7 @@ class GraphViewController(var graphView: GraphView) {
 
     init {
         gestureListener = MyGestureListener()
-        gestureDetector = GestureDetector(graphView.getContext(), gestureListener, graphView.handler)
+        gestureDetector = GestureDetector(graphView.context, gestureListener, graphView.handler)
         gestureDetector.setIsLongpressEnabled(true)
         layout = SpringLayout(graph)
         layout!!.iterate(20)

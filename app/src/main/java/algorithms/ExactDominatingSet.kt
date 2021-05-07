@@ -20,17 +20,7 @@ import kotlin.collections.HashSet
  * @author pgd
  */
 class ExactDominatingSet<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, Collection<V>?>(graph) {
-    override fun execute(): Collection<V>? {
-        if (graph == null || graphSize() === 0) return emptySet()
-        if (graphEdgeSize() === 0) return graph.vertexSet()
-        val solution: HashSet<V> = HashSet()
-        val ci = ConnectivityInspector<V, E>(graph)
-        for (vertices in ci.connectedSets()) {
-            solution.addAll(execute(InducedSubgraph.inducedSubgraphOf(graph, vertices))!!.asIterable())
-            if (cancelFlag) return null
-        }
-        return solution
-    }
+
 
     fun execute(cc: SimpleGraph<V, E>): HashSet<V>? {
         val g = SimpleGraph<VertexDominated<V>,EdgeDominated>(EdgeDominated::class.java)
@@ -95,5 +85,17 @@ class ExactDominatingSet<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, Coll
 
     internal class EdgeDominated {
         var dominated = false
+    }
+
+    override fun call(): Collection<V>? {
+        if (graph == null || graphSize() == 0) return emptySet()
+        if (graphEdgeSize() == 0) return graph.vertexSet()
+        val solution: HashSet<V> = HashSet()
+        val ci = ConnectivityInspector<V, E>(graph)
+        for (vertices in ci.connectedSets()) {
+            solution.addAll(execute(InducedSubgraph.inducedSubgraphOf(graph, vertices))!!.asIterable())
+            if (cancelFlag) return null
+        }
+        return solution
     }
 }
