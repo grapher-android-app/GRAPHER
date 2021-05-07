@@ -47,10 +47,10 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
         val button = dialog.findViewById<Button>(R.id.cancel_button)
         button.setOnClickListener{
             if(!isDone){
-            //canceling the algorithm
-            algorithm.cancel()
-            GraphView.time(false)
-            dialog.dismiss()
+                //canceling the algorithm
+                algorithm.cancel()
+                GraphView.time(false)
+                dialog.dismiss()
             }
             //Closes the dialog
            else{
@@ -85,6 +85,8 @@ abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : 
 
     override fun done() {
         super.done()
+        dialog.dismiss()
+        resultText(get())
         Log.d("DONE","ALGORITHM DONE")
     }
 }
