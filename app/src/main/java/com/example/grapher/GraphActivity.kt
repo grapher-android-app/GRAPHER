@@ -18,8 +18,6 @@ class GraphActivity : AppCompatActivity() {
         setContentView(R.layout.activity_graph)
         Node.resetCounter()
 
-
-
         //Changes the name of the mode you are in
         graphView = findViewById<GraphView>(R.id.graphView)
         graphViewController= GraphViewController(graphView)
@@ -69,7 +67,7 @@ class GraphActivity : AppCompatActivity() {
                     graphView.showAllCycle4()
                 }
                 R.id.min_dominating_set -> {
-                    graphView.exactDominatingSet()
+                    graphView.exactDominatingSet(this)
                 }
                 R.id.power -> {
                     graphView.constructPower()

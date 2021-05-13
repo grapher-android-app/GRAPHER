@@ -111,7 +111,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         this.gestureDetector = gestureDetector
     }
 
-    // TODO change to this implementation
     /**
      * Updates the color of all edges and nodes based on selection and highlighting
      * from user input and algorithm results
@@ -202,7 +201,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         canvas.setMatrix(prevMatrix)
     }
 
-    //TODO move to GraphViewController Class
     // TODO check if works on multiple cycles
 
     fun showAllCycle4() : Int {
@@ -236,15 +234,25 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         redraw()
     }
 
-    fun exactDominatingSet(){
-        val eds = ExactDominatingSet(graph)
-        val nodes = eds.call()
-        if (nodes != null) {
-            for (node in nodes){
-                highlightedNodes.add(node)
+    fun exactDominatingSet(graphActivity: GraphActivity){
+        val eds = ExactDominatingSet<Node,Edge<Node>>(graph)
+        val algoWrapper: AlgoWrapper<Collection<Node>?>
+        algoWrapper = object : AlgoWrapper<Collection<Node>?>(graphActivity, eds) {
+            override fun resultText(result: Collection<Node>?): String {
+                clearAll()
+                Log.d("RESULT","IS DONE")
+                return if (result == null) {
+                    "Algorithm was cancelled"
+                } else {
+                    for (node in result){
+                        highlightedNodes.add(node)
+                    }
+                    redraw()
+                    "Hamiltonian path"
+                }
             }
         }
-        redraw()
+        Thread{algoWrapper.run()}.start()
     }
 
     fun showCenterNode() : Boolean {
