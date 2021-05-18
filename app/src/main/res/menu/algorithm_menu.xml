@@ -171,6 +171,18 @@
         android:id="@+id/power"
         android:title="Construct Power Graph"/>
 
+    <item android:id="@+id/clearGraph"
+        android:title="Clear Graph"/>
+
+    <item
+        android:id="@+id/share_metapost"
+        android:title="Share graph"/>
+
+    <item
+        android:id="@+id/metapost_to_clipboard"
+        android:title="clipboard"/>
+
+
 </menu>
 
 

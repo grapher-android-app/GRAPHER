@@ -60,19 +60,9 @@ class GraphActivity : AppCompatActivity() {
 
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-                /*
-                R.id.share_metapost -> {
-                    shareMetapost()
-                }
-                R.id.metapost_to_clipboard -> {
-                    if(copyMetapostToClipboard()) {
-                        shortToast("Copied info on ${graphViewController.graphInfo()}")
-                    }
-                    else {
-                        shortToast("An error occurd copying to clipboard!")
-                    }
-                }
-                 */
+
+
+
                 R.id.test1 -> Toast.makeText(this, "lol", Toast.LENGTH_SHORT).show()
                 R.id.show_center -> {
                     var conn : Boolean = graphView.showCenterNode()
@@ -119,6 +109,25 @@ class GraphActivity : AppCompatActivity() {
                         else -> shortToast("Graph is not Eulerian")
                     }
                 }
+                R.id.clearGraph -> {
+                    finish()
+                    startActivity(intent)
+                    shortToast("Graph was cleared")
+                }
+
+                R.id.share_metapost -> {
+                    shareMetapost()
+                }
+
+                R.id.metapost_to_clipboard -> {
+                    if(copyMetapostToClipboard()) {
+                        shortToast("Copied info on ${graphViewController}")
+                    }
+                    else {
+                        shortToast("An error occurd copying to clipboard!")
+                    }
+                }
+
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
