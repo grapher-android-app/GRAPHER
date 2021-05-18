@@ -58,7 +58,7 @@ object GraphExporter {
         res += "enddef;\n\n"
 
         for (v : Node in graph.vertexSet()) {
-            res += "n ${v.getId()} = (${v.getCoordinate().getX()},${v.getCoordinate().getY()};\n"
+            res += "n ${v.getId()} = (${v.getCoordinate().getX()},${v.getCoordinate().getY()});\n"
             res += "\n"
         }
         for (e : Edge<Node> in graph.edgeSet()) {
