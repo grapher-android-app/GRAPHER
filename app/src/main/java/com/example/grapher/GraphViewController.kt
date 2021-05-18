@@ -5,7 +5,9 @@ import android.graphics.Matrix
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
+import model.Edge
 import model.Node
+import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
 
@@ -159,7 +161,9 @@ class GraphViewController(var graphView: GraphView) {
         return Coordinate(screenPoint[0], screenPoint[1])
     }
 
-
+    fun getGraph() : SimpleGraph<Node, Edge<Node>> {
+        return graph
+    }
 
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
 
