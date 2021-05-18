@@ -1,5 +1,6 @@
 package com.example.grapher
 
+import algorithms.GraphInformation
 import algorithms.SpringLayout
 import android.graphics.Matrix
 import android.util.Log
@@ -16,8 +17,6 @@ class GraphViewController(var graphView: GraphView) {
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
 
-//    private var selectedNode = graphView.selectedNode
-
     private var graph = graphView.graph
 
     private var layout : SpringLayout? = null
@@ -30,10 +29,11 @@ class GraphViewController(var graphView: GraphView) {
     private var transformMatrix: Matrix = graphView.transformMatrix
 
     private var matrixScale: Float = 1F
-
     private var errorMissRadius: Float = 3F
 
     private var selectedNodes = graphView.selectedNodes
+
+    private var info = ""
 
     init {
         gestureListener = MyGestureListener()
@@ -163,6 +163,11 @@ class GraphViewController(var graphView: GraphView) {
 
     fun getGraph() : SimpleGraph<Node, Edge<Node>> {
         return graph
+    }
+
+    fun graphInfo() : String {
+        info = GraphInformation.graphInfo(graph)
+        return info
     }
 
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
