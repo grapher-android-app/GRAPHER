@@ -3,6 +3,7 @@ package com.example.grapher
 import algorithms.*
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -312,6 +313,35 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                     markedEdges.addAll(result.edgeList)
                     redraw()
                     "Hamiltonian path"
+                }
+            }
+        }
+        //algoWrapper.setTitle("Computing hamiltonian path ...")
+        Thread{algoWrapper.run()}.start()
+    }
+
+    fun showOptimalColoring(graphActivity: GraphActivity){
+        val optColAlgo: Algorithm<Node,Edge<Node>,Set<Set<Node>>?> = OptimalColouring(graph)
+        val algoWrapper = object : AlgoWrapper<Set<Set<Node>>>(graphActivity, optColAlgo) {
+            override fun resultText(result: Set<Set<Node>>?): String {
+                clearAll()
+                return if (result == null) {
+                    "No optimal coloring"
+                } else {
+                    var colorId = 0F
+                    val n: Float = result.size.toFloat()
+                    for (color in result){
+                        for (node in color){
+                            val hsl = FloatArray(3)
+                            hsl[0] = (colorId/n)*255F
+                            hsl[1] = 1F
+                            hsl[2] = 1F
+                            node.setColor(Color.HSVToColor(hsl))
+                        }
+                        colorId+=1
+                    }
+                    invalidate()
+                    "Optimal coloring with ${result.size} colors"
                 }
             }
         }

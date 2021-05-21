@@ -83,6 +83,9 @@ class GraphActivity : AppCompatActivity() {
                 R.id.hamiltonian_cycle -> {
                     graphView.showHamiltonianCycle(this)
                 }
+                R.id.optimal_coloring -> {
+                    graphView.showOptimalColoring(this)
+                }
                 R.id.flow -> {
                     val flow = graphView.showFlow()
                     when {
