@@ -101,6 +101,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return gestureDetector.onTouchEvent(event)
     }
 
+    /**
+     * flips between node and edge drawing mode
+     */
     fun changeMode(){
         nodeMode = !nodeMode
         clearAll()

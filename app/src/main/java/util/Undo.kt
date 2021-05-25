@@ -67,6 +67,7 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
     }
 
     fun removeVertex(node : Node) : Boolean {
+        //TODO undoing this will not restore removed edges
         addHistory(node, false)
         return graph.removeVertex(node)
     }
@@ -78,7 +79,6 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
     fun addEdge(v : Node, u : Node, edge : Edge<Node>) : Edge<Node> {
         addHistory(v, u, true)
         graph.addEdge(v, u, edge)
-        // TODO This is changed once again because of incorrect Supplier implementation
         return edge
     }
 
@@ -87,7 +87,6 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
         val edge = graph.addEdge(v, u)
         edge.setSource(v)
         edge.setTarget(u)
-        // TODO This is changed once again because of incorrect Supplier implementation
         return edge
     }
 
@@ -100,6 +99,7 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
         hasChanged = true
         history.push(History(node, add))
     }
+
 
     fun addHistory(v : Node, u : Node, add : Boolean) {
         hasChanged = true
