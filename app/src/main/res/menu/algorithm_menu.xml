@@ -165,7 +165,8 @@
         android:title="Hamiltonian Path"/>
 
     <item
-        android:id="@+id/claw_deletion"/>
+        android:id="@+id/claw_deletion"
+        android:title="Claw-free edge deletion"/>
 
     <item android:id="@+id/clearGraph"
         android:title="Clear Graph"/>
