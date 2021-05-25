@@ -165,8 +165,20 @@
         android:title="Hamiltonian Path"/>
 
     <item
-        android:id="@+id/claw_deletion"
-        android:title="Claw-free edge deletion"/>
+        android:id="@+id/claw_deletion"/>
+
+    <item android:id="@+id/clearGraph"
+        android:title="Clear Graph"/>
+
+    <item
+        android:id="@+id/share_metapost"
+        android:title="Share graph"/>
+
+    <item
+        android:id="@+id/metapost_to_clipboard"
+        android:title="clipboard"/>
+
+
 </menu>
 
 

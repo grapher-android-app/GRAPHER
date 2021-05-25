@@ -1,83 +1,92 @@
 package algorithms
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
-import android.content.DialogInterface
-import android.os.AsyncTask
+import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.ProgressBar
 import com.example.grapher.GraphActivity
 import com.example.grapher.GraphView
+import com.example.grapher.R
 import model.Edge
 import model.Node
+import java.util.concurrent.FutureTask
 
 abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : Algorithm<Node, Edge<Node>, Result?>)
-    : AsyncTask<Void, Integer, Result>() {
+    : FutureTask<Result>(algorithm), ProgressListener{
 
-    var pDialog : ProgressDialog = ProgressDialog(activity)
-
+    private lateinit var dialog: AlertDialog
+    var progressbar: ProgressBar
     init {
         setUpProgressDialog()
-    }
-
-    constructor(activity: GraphActivity, algorithm: Algorithm<Node, Edge<Node>, Result?>, progressTitle: String)
-        : this(activity, algorithm) {
-        pDialog.setTitle(progressTitle)
-
+        algorithm.progressListener = this
+        progressbar = dialog.findViewById<ProgressBar>(R.id.progressBar)
+        progressbar.visibility = View.VISIBLE
     }
 
     fun setTitle(dialogTitle : String) {
-        pDialog.setTitle(dialogTitle)
+        dialog.setTitle(dialogTitle)
     }
 
-    override fun onCancelled() {
-        pDialog.cancel()
-        GraphView.time(false)
-    }
-
-    override fun doInBackground(vararg params: Void?): Result? {
-        GraphView.time(true)
-        return algorithm.execute()
-    }
-
-    override fun onPreExecute() {
-        val myOnCancelListener = object : DialogInterface.OnCancelListener {
-            override fun onCancel(dialog: DialogInterface?) {
-                cancel(true)
-                algorithm.cancel()
-                GraphView.time(false)
-            }
-        }
+    fun setProgressGoal(progressGoal: Int) {
+          progressbar.max = progressGoal
     }
 
     abstract fun resultText(result: Result?) : String
 
-    override fun onPostExecute(result: Result) {
-        pDialog.dismiss()
-        val resDialog = AlertDialog.Builder(activity)
-
-        resDialog.setMessage(resultText(result))
-        resDialog.setTitle("Result")
-        resDialog.setPositiveButton("OK", null)
-        resDialog.create().show()
-
-        GraphView.time(false)
-    }
-
-    override fun onProgressUpdate(vararg values: Integer?) {
-        for (progress : Integer? in values) {
-            if (progress != null) {
-                pDialog.progress = progress.toInt()
-            }
-        }
-    }
-
     private fun setUpProgressDialog() {
-        pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        pDialog.isIndeterminate = false
-        pDialog.setCancelable(false)
-        pDialog.setTitle("Computing...")
+        val builder = AlertDialog.Builder(activity)
 
-        var myOnClickListener = DialogInterface.OnClickListener { dialog, which -> pDialog.cancel() }
-        pDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Cancel", myOnClickListener)
+        val inflater = activity.layoutInflater
+        builder.setView(inflater.inflate(R.layout.algorithm_progress,null))
+        builder.setCancelable(false)
+
+        dialog = builder.create()
+        dialog.show()
+        Log.d("DIALOG","SHOWING DIALOG")
+        val button = dialog.findViewById<Button>(R.id.cancel_button)
+        button.setOnClickListener{
+            if(!isDone){
+                //canceling the algorithm
+                algorithm.cancel()
+                GraphView.time(false)
+                dialog.dismiss()
+            }
+            //Closes the dialog
+           else{
+               Log.d("ALGO", "ALGO IS DONE")
+
+
+                dialog.dismiss()
+            }
+
+        }
+
     }
-    //execute in Algorithms
+
+    override fun progress(percent: Float) {
+        Log.d("progress","this is progress $percent")
+        progressbar.max = 100
+        //progressbar.progress = (percent*100).toInt()
+        progressbar.progress = (percent*100).toInt()
+    }
+
+    override fun progress(k: Int, n: Int) {
+        Log.d("progress","this is progress 2 $k $n")
+        progressbar.max = n
+        //progressbar.progress = k
+        progressbar.progress = k
+    }
+
+    override fun run() {
+        Log.d("RUN","STARTED RUNNING")
+        super.run()
+    }
+
+    override fun done() {
+        super.done()
+        dialog.dismiss()
+        resultText(get())
+        Log.d("DONE","ALGORITHM DONE")
+    }
 }

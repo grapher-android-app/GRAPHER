@@ -1,11 +1,14 @@
 package com.example.grapher
 
+import algorithms.GraphInformation
 import algorithms.SpringLayout
 import android.graphics.Matrix
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
+import model.Edge
 import model.Node
+import org.jgrapht.graph.SimpleGraph
 import util.Coordinate
 import util.Undo
 
@@ -13,8 +16,6 @@ class GraphViewController(var graphView: GraphView) {
 
     private var gestureDetector: GestureDetector
     private var gestureListener: MyGestureListener
-
-//    private var selectedNode = graphView.selectedNode
 
     private var graph = graphView.graph
 
@@ -28,20 +29,24 @@ class GraphViewController(var graphView: GraphView) {
     private var transformMatrix: Matrix = graphView.transformMatrix
 
     private var matrixScale: Float = 1F
-
     private var errorMissRadius: Float = 3F
 
     private var selectedNodes = graphView.selectedNodes
 
+    private var info = ""
+
     init {
         gestureListener = MyGestureListener()
-        gestureDetector = GestureDetector(graphView.getContext(), gestureListener, graphView.handler)
+        gestureDetector = GestureDetector(graphView.context, gestureListener, graphView.handler)
         gestureDetector.setIsLongpressEnabled(true)
         layout = SpringLayout(graph)
         layout!!.iterate(20)
         graphView.setGestureDetector(gestureDetector)
     }
 
+    /**
+     * Returns if there is a node on given coordinate
+     */
     private fun hasNode(coordinate: Coordinate): Boolean {
         for (node: Node in graph.vertexSet()){
             if (isOnNode(coordinate, node)){
@@ -63,6 +68,9 @@ class GraphViewController(var graphView: GraphView) {
         refreshDrawableState()
     }
 
+    /**
+     * returns Node at given coordinate
+     */
     private fun getNodeAtCoordinate(coordinate: Coordinate): Node?{
         for (node: Node in graph.vertexSet()){
             if (isOnNode(coordinate, node)){
@@ -77,20 +85,32 @@ class GraphViewController(var graphView: GraphView) {
         redraw()
     }
 
+    /**
+     * marks given node as the selected as the source of the next edge drawn
+     */
     private fun selectNode(node: Node){
         graphView.selectedNode = node
         redraw()
         refreshDrawableState()
     }
 
+    /**
+     * unselects the selected node
+     */
     private fun unselectNode(){
         graphView.selectedNode = null
         redraw()
         refreshDrawableState()
     }
 
+    /**
+     * returns true if there exists a selected node
+     */
     private fun hasSelectedNode(): Boolean = graphView.selectedNode!=null
 
+    /**
+     * Returns true if coordinate is within error radius of given nodes position
+     */
     private fun isOnNode(coordinate: Coordinate, node: Node): Boolean{
         if (matrixScale<errorMissRadius){
             return node.getCoordinate().subtract(coordinate).length()<= node.getSize()*errorMissRadius/matrixScale
@@ -100,8 +120,14 @@ class GraphViewController(var graphView: GraphView) {
         }
     }
 
+    /**
+     * checks if there exists an edge between given node and selected node
+     */
     private fun hasEdge(node: Node): Boolean = graph.containsEdge(graphView.selectedNode, node)
 
+    /**
+     * adds an edge between given node and selected node
+     */
     private fun addEdgeBetween(node: Node){
 //        val edge = Edge(selectedNode!!, node)
         graphWithMemory.addEdge(graphView.selectedNode!!, node)
@@ -111,12 +137,23 @@ class GraphViewController(var graphView: GraphView) {
         refreshDrawableState()
     }
 
+    /**
+     * removes edge between nodes u and v
+     */
     private fun removeEdge(u: Node, v: Node){
         graphWithMemory.removeEdge(u, v)
         unselectNode()
         redraw()
     }
 
+    /**
+     * removes the given node, including all edges
+     */
+    private fun removeNode(u: Node): Boolean = graphWithMemory.removeVertex(u)
+
+    /**
+     * moves the selected node to given coordinate
+     */
     private fun moveNode(coordinate: Coordinate){
         graphView.selectedNode!!.setCoordinate(coordinate)
     }
@@ -151,6 +188,9 @@ class GraphViewController(var graphView: GraphView) {
         invalidate()
     }
 
+    /**
+     * translates the input coordinate to a transformMatrix coordinate
+     */
     private fun translateCoordinate(screenCoordinate: Coordinate): Coordinate {
         val screenPoint = floatArrayOf(screenCoordinate.getX(), screenCoordinate.getY())
         val invertedTransformMatrix = Matrix()
@@ -159,7 +199,14 @@ class GraphViewController(var graphView: GraphView) {
         return Coordinate(screenPoint[0], screenPoint[1])
     }
 
+    fun getGraph() : SimpleGraph<Node, Edge<Node>> {
+        return graph
+    }
 
+    fun graphInfo() : String {
+        info = GraphInformation.graphInfo(graph)
+        return info
+    }
 
     inner class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
 
@@ -213,10 +260,15 @@ class GraphViewController(var graphView: GraphView) {
 
         override fun onDoubleTap(e: MotionEvent?): Boolean {
             Log.d("onDoubleTap", "onSingleTapConfirmed")
-            if (graphView.nodeMode){
-
-            } else{
-
+            if (e!=null) {
+                if (graphView.nodeMode) {
+                    val coordinate = translateCoordinate(Coordinate(e.x, e.y))
+                    if (hasNode(coordinate)){
+                        val node = getNodeAtCoordinate(coordinate)
+                        removeNode(node!!)
+                        redraw()
+                    }
+                }
             }
             return super.onDoubleTap(e)
         }

@@ -3,6 +3,7 @@ package com.example.grapher
 import algorithms.*
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.util.AttributeSet
@@ -100,6 +101,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return gestureDetector.onTouchEvent(event)
     }
 
+    /**
+     * flips between node and edge drawing mode
+     */
     fun changeMode(){
         nodeMode = !nodeMode
         clearAll()
@@ -111,7 +115,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         this.gestureDetector = gestureDetector
     }
 
-    // TODO change to this implementation
     /**
      * Updates the color of all edges and nodes based on selection and highlighting
      * from user input and algorithm results
@@ -202,7 +205,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         canvas.setMatrix(prevMatrix)
     }
 
-    //TODO move to GraphViewController Class
     // TODO check if works on multiple cycles
 
     fun showAllCycle4() : Int {
@@ -229,22 +231,32 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun constructPower(){
-        var powerGraph = PowerGraph.constructPowerGraph(graph)
+        val powerGraph = PowerGraph.constructPowerGraph(graph)
         for (edge: Edge<Node> in powerGraph.edgeSet()){
             graphWithMemory.addEdge(edge)
         }
         redraw()
     }
 
-    fun exactDominatingSet(){
-        val eds = ExactDominatingSet(graph)
-        val nodes = eds.execute()
-        if (nodes != null) {
-            for (node in nodes){
-                highlightedNodes.add(node)
+    fun exactDominatingSet(graphActivity: GraphActivity){
+        val eds = ExactDominatingSet<Node,Edge<Node>>(graph)
+        val algoWrapper: AlgoWrapper<Collection<Node>?>
+        algoWrapper = object : AlgoWrapper<Collection<Node>?>(graphActivity, eds) {
+            override fun resultText(result: Collection<Node>?): String {
+                clearAll()
+                Log.d("RESULT","IS DONE")
+                return if (result == null) {
+                    "Algorithm was cancelled"
+                } else {
+                    for (node in result){
+                        highlightedNodes.add(node)
+                    }
+                    redraw()
+                    "Hamiltonian path"
+                }
             }
         }
-        redraw()
+        Thread{algoWrapper.run()}.start()
     }
 
     fun showCenterNode() : Boolean {
@@ -307,15 +319,44 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 }
             }
         }
-        algoWrapper.setTitle("Computing hamiltonian path ...")
-        algoWrapper.execute()
+        //algoWrapper.setTitle("Computing hamiltonian path ...")
+        Thread{algoWrapper.run()}.start()
+    }
+
+    fun showOptimalColoring(graphActivity: GraphActivity){
+        val optColAlgo: Algorithm<Node,Edge<Node>,Set<Set<Node>>?> = OptimalColouring(graph)
+        val algoWrapper = object : AlgoWrapper<Set<Set<Node>>>(graphActivity, optColAlgo) {
+            override fun resultText(result: Set<Set<Node>>?): String {
+                clearAll()
+                return if (result == null) {
+                    "No optimal coloring"
+                } else {
+                    var colorId = 0F
+                    val n: Float = result.size.toFloat()
+                    for (color in result){
+                        for (node in color){
+                            val hsl = FloatArray(3)
+                            hsl[0] = (colorId/n)*255F
+                            hsl[1] = 1F
+                            hsl[2] = 1F
+                            node.setColor(Color.HSVToColor(hsl))
+                        }
+                        colorId+=1
+                    }
+                    invalidate()
+                    "Optimal coloring with ${result.size} colors"
+                }
+            }
+        }
+        //algoWrapper.setTitle("Computing hamiltonian path ...")
+        Thread{algoWrapper.run()}.start()
     }
 
     fun showHamiltonianCycle(graphActivity: GraphActivity) {
         val hamcyc: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
-        val alg: AlgoWrapper<GraphPath<Node, Edge<Node>>>
+        val algoWrapper: AlgoWrapper<GraphPath<Node, Edge<Node>>>
         hamcyc = HamiltonianCycleInspector(graph)
-        alg = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamcyc) {
+        algoWrapper = object : AlgoWrapper<GraphPath<Node, Edge<Node>>>(graphActivity, hamcyc) {
             override fun resultText(result: GraphPath<Node, Edge<Node>>?): String {
                 clearAll()
                 return if (result == null) {
@@ -328,10 +369,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 }
             }
         }
-        alg.setTitle("Computing hamiltonian cycle ...")
-        alg.execute()
+        algoWrapper.setTitle("Computing hamiltonian cycle ...")
+        //this is ugly but runs the progressbar in a new thread
+        Thread{algoWrapper.run()}.start()
     }
-
     /**
      * Catch all method to call when reset graph to default representation
      */

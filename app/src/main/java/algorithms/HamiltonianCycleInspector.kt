@@ -12,9 +12,9 @@ import java.util.*
 
 class HamiltonianCycleInspector<V, E>(graph: SimpleGraph<V, E>?) : Algorithm<V, E, GraphPath<V, E>?>(graph) {
     private val isPotentiallyYesInstance: Boolean
-        private get() = CutAndBridgeInspector.findCutVertex(graph!!) == null
+        get() = CutAndBridgeInspector.findCutVertex(graph!!) == null
 
-    override fun execute(): GraphPath<V, E>? {
+    override fun call(): GraphPath<V, E>? {
         if (graph != null) {
             if (graph.vertexSet().size < 3) return null
         }

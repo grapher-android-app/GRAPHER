@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="@string/shake_me" />
+            android:text="Normalize" />
 
         <Button
             android:id="@+id/hamburger"

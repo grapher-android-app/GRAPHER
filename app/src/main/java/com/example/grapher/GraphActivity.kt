@@ -1,12 +1,18 @@
 package com.example.grapher
 
 import algorithms.AlgoWrapper
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import model.Node
 import org.jgrapht.Graph
+import util.GraphExporter
+import java.lang.Exception
 
 /** AppCompatActivity replaces Activity in this library */
 class GraphActivity : AppCompatActivity() {
@@ -17,8 +23,6 @@ class GraphActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_graph)
         Node.resetCounter()
-
-
 
         //Changes the name of the mode you are in
         graphView = findViewById<GraphView>(R.id.graphView)
@@ -56,20 +60,19 @@ class GraphActivity : AppCompatActivity() {
 
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
+
+
+
                 R.id.test1 -> Toast.makeText(this, "lol", Toast.LENGTH_SHORT).show()
                 R.id.show_center -> {
                     var conn : Boolean = graphView.showCenterNode()
-                    // TODO create easy toast feedback
-
-//                    progressDialog.startProgressDialog()
-
-
+                    if (!conn) shortToast("No center vertex in disconnected graph")
                 }
                 R.id.compute_cycle_4 -> {
                     graphView.showAllCycle4()
                 }
                 R.id.min_dominating_set -> {
-                    graphView.exactDominatingSet()
+                    graphView.exactDominatingSet(this)
                 }
                 R.id.power -> {
                     graphView.constructPower()
@@ -79,6 +82,9 @@ class GraphActivity : AppCompatActivity() {
                 }
                 R.id.hamiltonian_cycle -> {
                     graphView.showHamiltonianCycle(this)
+                }
+                R.id.optimal_coloring -> {
+                    graphView.showOptimalColoring(this)
                 }
                 R.id.flow -> {
                     val flow = graphView.showFlow()
@@ -106,6 +112,25 @@ class GraphActivity : AppCompatActivity() {
                         else -> shortToast("Graph is not Eulerian")
                     }
                 }
+                R.id.clearGraph -> {
+                    finish()
+                    startActivity(intent)
+                    shortToast("Graph was cleared")
+                }
+
+                R.id.share_metapost -> {
+                    shareMetapost()
+                }
+
+                R.id.metapost_to_clipboard -> {
+                    if(copyMetapostToClipboard()) {
+                        shortToast("Copied info on ${graphViewController}")
+                    }
+                    else {
+                        shortToast("An error occurd copying to clipboard!")
+                    }
+                }
+
                 else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
             }
             true
@@ -125,6 +150,33 @@ class GraphActivity : AppCompatActivity() {
      */
     private fun shortToast(toast : String) {
         Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun copyMetapostToClipboard() : Boolean {
+        val text = GraphExporter.getMetapost(graphViewController.getGraph())
+        return try {
+            val clipboard : ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Graph Information", text)
+            clipboard.setPrimaryClip(clip)
+            true
+        }
+        catch (e : Exception) {
+            println("Error while copying metapost to clipboard: $e")
+            e.printStackTrace()
+            false
+        }
+    }
+
+    private fun shareMetapost() {
+        var shareBody = GraphExporter.getMetapost(graphViewController.getGraph())
+        shareBody += "\n\n% Sent to you by Grapher"
+
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        sharingIntent.type = "text/plain"
+        //TODO add graphInfo method
+        //sharingIntent.putExtra(Intent.EXTRA_SUBJECT, graphViewController.graphInfo())
+        //sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
+        startActivity(Intent.createChooser(sharingIntent, "Share graph with"))
     }
 
 }

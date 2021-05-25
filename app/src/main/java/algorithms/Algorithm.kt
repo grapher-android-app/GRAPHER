@@ -1,15 +1,16 @@
 package algorithms
 
 import org.jgrapht.graph.SimpleGraph
+import java.util.concurrent.Callable
 import kotlin.math.min
 import kotlin.math.pow
 
-abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?) {
+abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?): Callable<Return> {
 
     var cancelFlag : Boolean = false
-    // val progressListener : ProgressListener
+    var progressListener : ProgressListener? = null
 
-    private val nanoDelay : Long = 0L
+    private val nanoDelay : Long = 20000000L
     private var nanoPrev = System.nanoTime() - nanoDelay
 
     private var progressGoal : Int
@@ -51,14 +52,49 @@ abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?) {
         return true
     }
 
+
+    /**
+     * Increases current progress, returns true if current progress has reached
+     * its goal.
+     *
+     * @return true if current >= goal
+     */
+    fun increaseProgress(): Boolean {
+        currentProgress++
+        if(currentProgress > progressGoal){
+            currentProgress = progressGoal
+            return true
+        }
+
+        progress(currentProgress, progressGoal)
+        return false
+    }
+
+
+
     /** Notifies the progress listener of the progress */
-    fun progess(percent : Float) {
-        //TODO implement
+    fun progress(percent : Float) {
+        if(progressListener != null){
+            val now : Long = System.nanoTime()
+            if(now-nanoPrev > nanoDelay){
+                progressListener!!.progress(percent)
+                nanoPrev = now
+            }
+        }
     }
 
+
+    /**
+     * Notifies the progress listener of the current progress (reached check
+     * point k out of n)
+     */
     fun progress(k : Int, n : Int) {
-        //TODO implement
+        if(progressListener != null){
+            val now : Long = System.nanoTime()
+            if(now-nanoPrev > nanoDelay){
+                progressListener!!.progress(k,n)
+                nanoPrev = now
+            }
+        }
     }
-
-    abstract fun execute() : Return
 }
