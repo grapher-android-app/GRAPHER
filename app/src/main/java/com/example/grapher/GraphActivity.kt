@@ -196,6 +196,14 @@ class GraphActivity : AppCompatActivity() {
                     graphInfo()
                 }
 
+                R.id.claws ->{
+                   val claw = graphView.ClawInsp()
+                    if(claw)  shortToast("Graph has a claw")
+                    else{
+                        shortToast("Graph is claw free")
+                    }
+                }
+
                 R.id.clearGraph -> {
                     finish()
                     startActivity(intent)

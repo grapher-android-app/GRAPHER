@@ -390,6 +390,14 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return DiameterInspector.diameter(graph)
     }
 
+    fun ClawInsp(): Boolean{
+        val lol =  ClawInspector.findClaw(graph)
+
+
+
+        return lol != null
+    }
+
     /**
      * Catch all method to call when reset graph to default representation
      */
