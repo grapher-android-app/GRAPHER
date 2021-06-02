@@ -1,6 +1,7 @@
 package com.example.grapher
 
 import algorithms.AlgoWrapper
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -72,9 +73,19 @@ class GraphActivity : AppCompatActivity() {
         hamburgerButton?.setOnClickListener{
             showPopUp(hamburgerButton)
         }
+    }
 
+    fun graphInfo(){
+        val builder = AlertDialog.Builder(this)
 
+        val inflater = layoutInflater
+        builder.setView(inflater.inflate(R.layout.graphinfo,null))
+        builder.setCancelable(false)
 
+        var dialog = builder.create()
+        dialog.show()
+        dialog.findViewById<TextView>(R.id.graphInfo).text = graphView.graphInfo()
+        dialog.findViewById<Button>(R.id.ok_button).setOnClickListener { dialog.hide() }
     }
 
     //Based on  https://www.tutorialspoint.com/how-to-detect-shake-events-in-kotlin (read: 2/6/21)
@@ -180,6 +191,9 @@ class GraphActivity : AppCompatActivity() {
                     val diam: Int? = graphView.diameterInsp()
                     if (diam!! > 0){shortToast("The diameter is $diam")}
                     else {shortToast("Graph has no diameter")}
+                }
+                R.id.show_info -> {
+                    graphInfo()
                 }
 
                 R.id.clearGraph -> {

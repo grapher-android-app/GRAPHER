@@ -177,6 +177,10 @@
         android:id="@+id/metapost_to_clipboard"
         android:title="clipboard"/>
 
+    <item
+        android:id="@+id/show_info"
+        android:title="Show graph info"/>
+
 
 </menu>
 

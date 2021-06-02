@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import model.Edge
 import model.EdgeStyle
 import model.Node
@@ -72,7 +73,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph({ Node(Coordinate.ORIGO) }, { Edge<Node>() }, false)
 
     private lateinit var gestureDetector: GestureDetector
-//    private var gestureListener: MyGestureListener
 
     var nodeMode: Boolean = true
     var selectedNode: Node? = null
@@ -150,6 +150,8 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
         invalidate()
     }
+
+    fun graphInfo() = GraphInformation.graphInfo(graph)
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
