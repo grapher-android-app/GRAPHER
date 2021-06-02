@@ -8,7 +8,7 @@ import kotlin.math.pow
 abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?): Callable<Return> {
 
     var cancelFlag : Boolean = false
-    var progressListener : ProgressListener? = null
+    var progressListener : IProgressListener? = null
 
     private val nanoDelay : Long = 20000000L
     private var nanoPrev = System.nanoTime() - nanoDelay
