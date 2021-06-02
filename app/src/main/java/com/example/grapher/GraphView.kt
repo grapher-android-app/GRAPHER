@@ -374,6 +374,25 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         Thread{algoWrapper.run()}.start()
     }
 
+    fun showAllCuts(){
+        val cuts = CutAndBridgeInspector.findAllCutVertices(graph)
+        for (cut in cuts){
+           highlightedNodes.add(cut)
+        }
+        redraw()
+    }
+
+    fun showAllBridges(): Boolean {
+        val bridges = CutAndBridgeInspector.findAllBridges(graph)
+        if (bridges.isEmpty()) return false
+        for (bridge in bridges){
+            markedEdges.add(bridge)
+        }
+        redraw()
+        return true
+    }
+
+
     fun diameterInsp(): Int?{
         return DiameterInspector.diameter(graph)
     }

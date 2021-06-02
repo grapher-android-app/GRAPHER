@@ -60,9 +60,6 @@ class GraphActivity : AppCompatActivity() {
 
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
-
-
-
                 R.id.show_center -> {
                     var conn : Boolean = graphView.showCenterNode()
                     if (!conn) shortToast("No center vertex in disconnected graph")
@@ -84,6 +81,14 @@ class GraphActivity : AppCompatActivity() {
                 }
                 R.id.optimal_coloring -> {
                     graphView.showOptimalColoring(this)
+                }
+                R.id.AllBridges -> {
+                    if (!graphView.showAllBridges()){
+                        shortToast("No bridges")
+                    }
+                }
+                R.id.allCuts -> {
+                    graphView.showAllCuts()
                 }
                 R.id.flow -> {
                     val flow = graphView.showFlow()
@@ -137,7 +142,7 @@ class GraphActivity : AppCompatActivity() {
                     }
                 }
 
-                else -> Toast.makeText(this, "lollol", Toast.LENGTH_SHORT).show()
+                else -> null
             }
             true
         }
