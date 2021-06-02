@@ -157,17 +157,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         edgePaint.strokeWidth = 5F
         edgePaint.style = Paint.Style.STROKE
 
-//        if (prevPointerCoords!=null) {
-//            vertexPaint.setColor(Color.RED)
-//            canvas.drawCircle(
-//                    prevPointerCoords!![0].getX(), prevPointerCoords!![0].getY(), 15F, vertexPaint
-//            )
-//            vertexPaint.setColor(Color.BLUE)
-//            canvas.drawCircle(
-//                    prevPointerCoords!![1].getX(), prevPointerCoords!![1].getY(), 15F, vertexPaint
-//            )
-//        }
-
         //Handles Rotation, Zooming and Panning
         val m = matrix
         prevMatrix.set(m)
@@ -239,7 +228,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun exactDominatingSet(graphActivity: GraphActivity){
-        val eds = ExactDominatingSet<Node,Edge<Node>>(graph)
+        val eds = ExactDominatingSet(graph)
         val algoWrapper: AlgoWrapper<Collection<Node>?>
         algoWrapper = object : AlgoWrapper<Collection<Node>?>(graphActivity, eds) {
             override fun resultText(result: Collection<Node>?): String {
@@ -375,6 +364,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun showAllCuts(){
+        clearAll()
         val cuts = CutAndBridgeInspector.findAllCutVertices(graph)
         for (cut in cuts){
            highlightedNodes.add(cut)
@@ -383,6 +373,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun showAllBridges(): Boolean {
+        clearAll()
         val bridges = CutAndBridgeInspector.findAllBridges(graph)
         if (bridges.isEmpty()) return false
         for (bridge in bridges){
@@ -393,13 +384,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
 
-    fun diameterInsp(): Int?{
+    fun diameterInsp(): Int{
         return DiameterInspector.diameter(graph)
     }
-
-
-
-
 
     /**
      * Catch all method to call when reset graph to default representation
