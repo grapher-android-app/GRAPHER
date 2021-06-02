@@ -5,6 +5,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -13,13 +17,32 @@ import model.Node
 import org.jgrapht.Graph
 import util.GraphExporter
 import java.lang.Exception
+import java.lang.Math.sqrt
+import java.util.*
 
 /** AppCompatActivity replaces Activity in this library */
 class GraphActivity : AppCompatActivity() {
     private lateinit var graphView: GraphView
     private lateinit var graphViewController: GraphViewController
+
+    //shake function values for shaking phone
+    var sensorManager: SensorManager? = null
+    var acceleration = 0f
+    var currentAcceleration = 0f
+    var lastAcceleration = 0f
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //for shake function with phone
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        Objects.requireNonNull(sensorManager)!!.registerListener(sensorListener, sensorManager!!
+            .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL)
+        acceleration = 10f
+        currentAcceleration = SensorManager.GRAVITY_EARTH
+        lastAcceleration = SensorManager.GRAVITY_EARTH
+
+
 
         setContentView(R.layout.activity_graph)
         Node.resetCounter()
@@ -38,23 +61,59 @@ class GraphActivity : AppCompatActivity() {
                 graphView.changeMode()
             }
         }
+        //Normalizes graph
         val shakeButton = findViewById<Button>(R.id.shake_button)
         shakeButton?.setOnClickListener {
             graphViewController.shake()
         }
 
+        //shows menu when clicked
         val hamburgerButton = findViewById<Button>(R.id.hamburger)
         hamburgerButton?.setOnClickListener{
             showPopUp(hamburgerButton)
         }
 
+
+
     }
 
-    //Maybe put this into a class later, but for now, its a menu :D
+    //Based on  https://www.tutorialspoint.com/how-to-detect-shake-events-in-kotlin (read: 2/6/21)
+    val sensorListener: SensorEventListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            val x = event.values[0]
+            val y = event.values[1]
+            val z = event.values[2]
+            lastAcceleration = currentAcceleration
+            currentAcceleration = kotlin.math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+            val delta: Float = currentAcceleration - lastAcceleration
+            acceleration = acceleration * 0.9f + delta
+            if (acceleration > 9.75) {
+                graphViewController.shake()
+            }
+        }
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
+    }
+    override fun onResume() {
+
+        sensorManager?.registerListener(sensorListener, sensorManager!!.getDefaultSensor(
+            Sensor .TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL
+        )
+        super.onResume()
+    }
+    override fun onPause() {
+        sensorManager!!.unregisterListener(sensorListener)
+        super.onPause()
+    }
+
+
+
+    /**
+        Inflates the menu with algorithms and listens for the user to click items in it.
+        When user clicks, the algorithm will run.
+        @param view
+     */
     private fun showPopUp(view: View){
         val popMenu = PopupMenu(this, view)
-//        var progressDialog = ProgressDialog(this)
-
         popMenu.inflate(R.menu.algorithm_menu)
 
 
