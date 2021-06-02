@@ -63,7 +63,6 @@ class GraphActivity : AppCompatActivity() {
 
 
 
-                R.id.test1 -> Toast.makeText(this, "lol", Toast.LENGTH_SHORT).show()
                 R.id.show_center -> {
                     var conn : Boolean = graphView.showCenterNode()
                     if (!conn) shortToast("No center vertex in disconnected graph")
@@ -112,6 +111,13 @@ class GraphActivity : AppCompatActivity() {
                         else -> shortToast("Graph is not Eulerian")
                     }
                 }
+
+                R.id.diameter -> {
+                    val diam: Int? = graphView.diameterInsp()
+                    if (diam!! > 0){shortToast("The diameter is $diam")}
+                    else {shortToast("Graph has no diameter")}
+                }
+
                 R.id.clearGraph -> {
                     finish()
                     startActivity(intent)

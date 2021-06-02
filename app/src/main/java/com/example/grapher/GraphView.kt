@@ -373,6 +373,15 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         //this is ugly but runs the progressbar in a new thread
         Thread{algoWrapper.run()}.start()
     }
+
+    fun diameterInsp(): Int?{
+        return DiameterInspector.diameter(graph)
+    }
+
+
+
+
+
     /**
      * Catch all method to call when reset graph to default representation
      */
