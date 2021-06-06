@@ -130,20 +130,24 @@ class GraphActivity : AppCompatActivity() {
                     graphView.showAllCycle4()
                 }
                 R.id.min_dominating_set -> {
-                    graphView.exactDominatingSet(this)
+                    val result = graphView.exactDominatingSet(this)
+                    shortToast(result)
                 }
                 R.id.power -> {
                     graphView.constructPower()
                     shortToast("Power graph has been constructed")
                 }
                 R.id.hamiltonian_path -> {
-                    graphView.showHamiltonianPath(this)
+                    val result = graphView.showHamiltonianPath(this)
+                    shortToast(result)
                 }
                 R.id.hamiltonian_cycle -> {
-                    graphView.showHamiltonianCycle(this)
+                    val result = graphView.showHamiltonianCycle(this)
+                    shortToast(result)
                 }
                 R.id.optimal_coloring -> {
-                    graphView.showOptimalColoring(this)
+                    val result = graphView.showOptimalColoring(this)
+                    shortToast(result)
                 }
                 R.id.AllBridges -> {
                     if (!graphView.showAllBridges()){
@@ -193,6 +197,17 @@ class GraphActivity : AppCompatActivity() {
                     }
                 }
 
+                R.id.chromatic_number -> {
+                    val result = graphView.chromaticNumber(this)
+                    shortToast(result)
+                }
+
+                R.id.girth -> {
+                    val girth = graphView.girth()
+                    if (girth < 0) shortToast("Acyclic")
+                    else shortToast("Girth $girth")
+                }
+
                 R.id.clearGraph -> {
                     finish()
                     startActivity(intent)
@@ -205,13 +220,12 @@ class GraphActivity : AppCompatActivity() {
 
                 R.id.metapost_to_clipboard -> {
                     if(copyMetapostToClipboard()) {
-                        shortToast("Copied info on ${graphViewController}")
+                        shortToast("Copied info on $graphViewController")
                     }
                     else {
                         shortToast("An error occurd copying to clipboard!")
                     }
                 }
-
                 else -> null
             }
             true

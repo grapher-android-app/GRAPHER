@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
 import model.Edge
 import model.EdgeStyle
 import model.Node
@@ -196,6 +195,17 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         canvas.setMatrix(prevMatrix)
     }
 
+    fun chromaticNumber(graphActivity: GraphActivity) : String {
+        val chromaticAlgo = ChromaticNumber(graph)
+        val algoWrapper = object : AlgoWrapper<Int>(graphActivity, chromaticAlgo) {
+            override fun resultText(result: Int?): String {
+                clearAll()
+                return "The chromatic number is $result"
+            }
+        }
+        return runAlgoWrapper(algoWrapper)
+    }
+
     // for the future: check if works on multiple cycles
     fun showAllCycle4() : Int {
         val cycles : Collection<List<Node>> = CycleInspector.findAllC4(graph)
@@ -221,6 +231,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun constructPower(){
+        clearAll()
         val powerGraph = PowerGraph.constructPowerGraph(graph)
         for (edge: Edge<Node> in powerGraph.edgeSet()){
             graphWithMemory.addEdge(edge)
@@ -228,7 +239,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         redraw()
     }
 
-    fun exactDominatingSet(graphActivity: GraphActivity){
+    fun exactDominatingSet(graphActivity: GraphActivity) : String {
         val eds = ExactDominatingSet(graph)
         val algoWrapper: AlgoWrapper<Collection<Node>?>
         algoWrapper = object : AlgoWrapper<Collection<Node>?>(graphActivity, eds) {
@@ -246,7 +257,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
                 }
             }
         }
-        Thread{algoWrapper.run()}.start()
+        return runAlgoWrapper(algoWrapper)
     }
 
     fun showCenterNode() : Boolean {
@@ -259,11 +270,18 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun isBipartite(): Boolean{
+        clearAll()
         return BipartiteInspector.isBipartite(graph)
     }
 
     fun isEulerian(): Boolean {
+        clearAll()
         return EulerianInspector.isEulerian(graph)
+    }
+
+    fun girth() : Int {
+        clearAll()
+        return GirthInspector.girth(graph)
     }
 
     fun showFlow() : Int {
@@ -293,7 +311,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return flow.first
     }
 
-    fun showHamiltonianPath(graphActivity: GraphActivity) {
+    fun showHamiltonianPath(graphActivity: GraphActivity) : String {
         val hamPathAlgo: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
         val algoWrapper: AlgoWrapper<GraphPath<Node, Edge<Node>>>
         hamPathAlgo = HamiltonianPathInspector(graph)
@@ -310,10 +328,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             }
         }
         //algoWrapper.setTitle("Computing hamiltonian path ...")
-        Thread{algoWrapper.run()}.start()
+        return runAlgoWrapper(algoWrapper)
     }
 
-    fun showOptimalColoring(graphActivity: GraphActivity){
+    fun showOptimalColoring(graphActivity: GraphActivity) : String {
         val optColAlgo: Algorithm<Node,Edge<Node>,Set<Set<Node>>?> = OptimalColouring(graph)
         val algoWrapper = object : AlgoWrapper<Set<Set<Node>>>(graphActivity, optColAlgo) {
             override fun resultText(result: Set<Set<Node>>?): String {
@@ -339,10 +357,10 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
             }
         }
         //algoWrapper.setTitle("Computing hamiltonian path ...")
-        Thread{algoWrapper.run()}.start()
+        return runAlgoWrapper(algoWrapper)
     }
 
-    fun showHamiltonianCycle(graphActivity: GraphActivity) {
+    fun showHamiltonianCycle(graphActivity: GraphActivity) : String {
         val hamcyc: Algorithm<Node, Edge<Node>, GraphPath<Node, Edge<Node>>?>
         val algoWrapper: AlgoWrapper<GraphPath<Node, Edge<Node>>>
         hamcyc = HamiltonianCycleInspector(graph)
@@ -361,7 +379,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         }
         algoWrapper.setTitle("Computing hamiltonian cycle ...")
         //this is ugly but runs the progressbar in a new thread
-        Thread{algoWrapper.run()}.start()
+        return runAlgoWrapper(algoWrapper)
     }
 
     fun showAllCuts(){
@@ -386,12 +404,24 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
 
 
     fun diameterInsp(): Int{
+        clearAll()
         return DiameterInspector.diameter(graph)
     }
 
     fun clawInsp(): Boolean{
+        clearAll()
         val claw =  ClawInspector.findClaw(graph)
         return claw != null
+    }
+
+    /**
+     * runs an AlgoWrapper class on a seperate thread and returns the result
+     */
+    fun <Result> runAlgoWrapper(algoWrapper: AlgoWrapper<Result>): String{
+        val thread =Thread{algoWrapper.run()}
+        thread.start()
+        thread.join()
+        return algoWrapper.resultText(algoWrapper.get())
     }
 
     /**
