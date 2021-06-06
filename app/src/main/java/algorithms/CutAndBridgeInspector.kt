@@ -100,10 +100,10 @@ class CutAndBridgeInspector {
          *            input graph to find bridge
          * @return a (possibly empty) set of bridges
          */
-        fun <V, E> findAllBridges(graph: SimpleGraph<V, E>): HashSet<E>?{
-            var bridges = HashSet<E>()
+        fun <V, E> findAllBridges(graph: SimpleGraph<V, E>): HashSet<E> {
+            val bridges = HashSet<E>()
             @SuppressWarnings("unchecked")
-            var gc: SimpleGraph<V,E> = graph.clone() as SimpleGraph<V, E> //idk om det er rett å gjøre sånn
+            var gc: SimpleGraph<V,E> = graph.clone() as SimpleGraph<V, E>
             val size: Int = ConnectivityInspector<V,E>(graph).connectedSets().size
 
             for(e: E in graph.edgeSet()){

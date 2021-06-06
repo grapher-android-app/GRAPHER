@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import model.Edge
 import model.EdgeStyle
 import model.Node
@@ -72,7 +73,6 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     var graph : SimpleGraph<Node, Edge<Node>> = SimpleGraph({ Node(Coordinate.ORIGO) }, { Edge<Node>() }, false)
 
     private lateinit var gestureDetector: GestureDetector
-//    private var gestureListener: MyGestureListener
 
     var nodeMode: Boolean = true
     var selectedNode: Node? = null
@@ -151,22 +151,13 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         invalidate()
     }
 
+    fun graphInfo() = GraphInformation.graphInfo(graph)
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         edgePaint.strokeWidth = 5F
         edgePaint.style = Paint.Style.STROKE
-
-//        if (prevPointerCoords!=null) {
-//            vertexPaint.setColor(Color.RED)
-//            canvas.drawCircle(
-//                    prevPointerCoords!![0].getX(), prevPointerCoords!![0].getY(), 15F, vertexPaint
-//            )
-//            vertexPaint.setColor(Color.BLUE)
-//            canvas.drawCircle(
-//                    prevPointerCoords!![1].getX(), prevPointerCoords!![1].getY(), 15F, vertexPaint
-//            )
-//        }
 
         //Handles Rotation, Zooming and Panning
         val m = matrix
@@ -239,7 +230,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
     }
 
     fun exactDominatingSet(graphActivity: GraphActivity){
-        val eds = ExactDominatingSet<Node,Edge<Node>>(graph)
+        val eds = ExactDominatingSet(graph)
         val algoWrapper: AlgoWrapper<Collection<Node>?>
         algoWrapper = object : AlgoWrapper<Collection<Node>?>(graphActivity, eds) {
             override fun resultText(result: Collection<Node>?): String {
@@ -373,6 +364,40 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         //this is ugly but runs the progressbar in a new thread
         Thread{algoWrapper.run()}.start()
     }
+
+    fun showAllCuts(){
+        clearAll()
+        val cuts = CutAndBridgeInspector.findAllCutVertices(graph)
+        for (cut in cuts){
+           highlightedNodes.add(cut)
+        }
+        redraw()
+    }
+
+    fun showAllBridges(): Boolean {
+        clearAll()
+        val bridges = CutAndBridgeInspector.findAllBridges(graph)
+        if (bridges.isEmpty()) return false
+        for (bridge in bridges){
+            markedEdges.add(bridge)
+        }
+        redraw()
+        return true
+    }
+
+
+    fun diameterInsp(): Int{
+        return DiameterInspector.diameter(graph)
+    }
+
+    fun ClawInsp(): Boolean{
+        val lol =  ClawInspector.findClaw(graph)
+
+
+
+        return lol != null
+    }
+
     /**
      * Catch all method to call when reset graph to default representation
      */

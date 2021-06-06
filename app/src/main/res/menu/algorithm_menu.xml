@@ -7,9 +7,9 @@
         android:id="@+id/test1"
         android:title="Paths, flows...">
         <menu>
-            <item
+            <!--<item
                 android:id="@+id/path"
-                android:title="Shortest s-t path"/>
+                android:title="Shortest s-t path"/>-->
             <item
                 android:id="@+id/steinerTree"
                 android:title="Steiner Tree"/>
@@ -37,7 +37,7 @@
         android:title="Basic Algorithms"
         android:id="@+id/test3">
         <menu>
-            <item
+            <!--<item
                 android:id="@+id/maximum_clique"
                 android:title="Maximum Clique" />
             <item
@@ -51,20 +51,18 @@
             <item
                 android:id ="@+id/connected_vertex_cover"
                 android:title ="Compute Connected Vertex Cover"
-                />
+                />-->
             <item
                 android:id ="@+id/min_dominating_set"
                 android:title ="Minimum Dominating Set"
                 />
-            <item
+            <!--<item
                 android:id ="@+id/perf_code"
                 android:title ="Perfect code"
-                />
+                /> -->
             <item
                 android:id = "@+id/power"
-                android:title = "Power graph"
-                />
-
+                android:title = "Power graph" />
         </menu>
     </item>
 
@@ -80,7 +78,7 @@
                 android:title="Optimal coloring"/>
         </menu>
     </item>
-    <item
+    <!--<item
         android:id="@+id/treewidth"
         android:title="Compute Treewidth"/>
 
@@ -126,15 +124,15 @@
 
     <item
         android:id="@+id/chordality"
-        android:title="Is chordal?"/>
+        android:title="Is chordal?"/> -->
 
     <item
         android:id="@+id/claws"
-        android:title="Claw-free?"/>
+        android:title="Claw-free?" />
 
-    <item
+   <!-- <item
         android:id="@+id/threshold"
-        android:title="Threshold recognition"/>
+        android:title="Threshold recognition"/> -->
 
     <item
         android:id="@+id/compute_cycle_4"
@@ -152,9 +150,9 @@
         android:id="@+id/show_center"
         android:title="Compute Center Vertex"/>
 
-    <item
+    <!--<item
         android:id="@+id/bandwidth"
-        android:title="Compute Bandwidth"/>
+        android:title="Compute Bandwidth"/> -->
 
     <item
         android:id="@+id/hamiltonian_cycle"
@@ -164,9 +162,9 @@
         android:id="@+id/hamiltonian_path"
         android:title="Hamiltonian Path"/>
 
-    <item
+    <!--<item
         android:id="@+id/claw_deletion"
-        android:title="Claw-free edge deletion"/>
+        android:title="Claw-free edge deletion"/>-->
 
     <item android:id="@+id/clearGraph"
         android:title="Clear Graph"/>
@@ -178,6 +176,10 @@
     <item
         android:id="@+id/metapost_to_clipboard"
         android:title="clipboard"/>
+
+    <item
+        android:id="@+id/show_info"
+        android:title="Show graph info"/>
 
 
 </menu>

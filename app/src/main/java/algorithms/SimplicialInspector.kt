@@ -15,6 +15,7 @@ object SimplicialInspector {
             var isSimplicial = true
             for (i in 0..neighs.size) {
                 for (j in i+1..neighs.size) {
+                    if (j==neighs.size) break
                     if (!graph.containsEdge(neighs[i], neighs[j])) {
                         isSimplicial = false
                         break

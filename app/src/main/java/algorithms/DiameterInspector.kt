@@ -27,9 +27,9 @@ class DiameterInspector {
                 for(u: V in g.vertexSet()){
                     if(v != u){
                         //d = DijkstraShortestPath<V,E>(g,u,v)
-                        d = DijkstraShortestPath<V,E>(g) //changed to this, idk if that okay
+                        d = DijkstraShortestPath<V,E>(g) //changed to this
                         //val currentPath: GraphPath<V,E>? = d.getPath()
-                        val currentPath: GraphPath<V,E>? = d.getPath(v,u) //idk med dette heller
+                        val currentPath: GraphPath<V,E>? = d.getPath(v,u)
                         if (currentPath != null) {
                             if(longestPath == null || longestPath.edgeList.size < currentPath.edgeList.size){
                                 longestPath = currentPath
