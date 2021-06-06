@@ -12,5 +12,4 @@ class DefaultSupplier<V> : Supplier<V> {
         }
 
     override fun get(): V = item
-
 }

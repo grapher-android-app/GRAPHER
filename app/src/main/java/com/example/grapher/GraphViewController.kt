@@ -300,19 +300,19 @@ class GraphViewController(var graphView: GraphView) {
                     if (prevPointerCoords==null || prevPointerCount != 2) {
                         prevPointerCoords = arrayOf(Coordinate(e2.getX(0), e2.getY(0)), Coordinate(e2.getX(1), e2.getY(1)))
                     } else {
-                        var newCoords = arrayOf(
+                        val newCoords = arrayOf(
                                 Coordinate(e2.getX(0), e2.getY(0)),
                                 Coordinate(e2.getX(1), e2.getY(1))
                         )
-                        val VectorPrevious = prevPointerCoords!!.get(1).subtract(prevPointerCoords!!.get(0))
-                        val VectorNew = newCoords[1].subtract(newCoords[0])
-                        val diffAngle = VectorNew.angle() - VectorPrevious.angle()
-                        val scale = VectorNew.length() / VectorPrevious.length()
+                        val vectorPrevious = prevPointerCoords!![1].subtract(prevPointerCoords!![0])
+                        val vectorNew = newCoords[1].subtract(newCoords[0])
+                        val diffAngle = vectorNew.angle() - vectorPrevious.angle()
+                        val scale = vectorNew.length() / vectorPrevious.length()
 
                         // the transformations
                         transformMatrix.postTranslate(
-                                -prevPointerCoords!!.get(0).getX(),
-                                -prevPointerCoords!!.get(0).getY()
+                                -prevPointerCoords!![0].getX(),
+                                -prevPointerCoords!![0].getY()
                         )
                         transformMatrix.postRotate(diffAngle)
                         transformMatrix.postScale(scale, scale)
@@ -335,8 +335,6 @@ class GraphViewController(var graphView: GraphView) {
 
         override fun onLongPress(e: MotionEvent?) {
             Log.d("GESTURE LISTENER", "onLongPress")
-            if (e!=null) {
-            }
         }
 
         /**

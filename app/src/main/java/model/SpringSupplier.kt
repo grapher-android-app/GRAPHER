@@ -9,5 +9,4 @@ class SpringSupplier: Supplier<SpringNode> {
     override fun get(): SpringNode {
         return SpringNode(Node(Coordinate.ORIGO),id++)
     }
-
 }

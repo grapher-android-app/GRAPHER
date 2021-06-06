@@ -196,8 +196,7 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         canvas.setMatrix(prevMatrix)
     }
 
-    // TODO check if works on multiple cycles
-
+    // for the future: check if works on multiple cycles
     fun showAllCycle4() : Int {
         val cycles : Collection<List<Node>> = CycleInspector.findAllC4(graph)
         clearAll()
@@ -390,12 +389,9 @@ class GraphView(context: Context?, attrs: AttributeSet, defStyleAttr: Int = 0) :
         return DiameterInspector.diameter(graph)
     }
 
-    fun ClawInsp(): Boolean{
-        val lol =  ClawInspector.findClaw(graph)
-
-
-
-        return lol != null
+    fun clawInsp(): Boolean{
+        val claw =  ClawInspector.findClaw(graph)
+        return claw != null
     }
 
     /**

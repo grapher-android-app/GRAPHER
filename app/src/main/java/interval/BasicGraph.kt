@@ -448,5 +448,4 @@ class BasicGraph {
         }
         return sg
     }
-
 }

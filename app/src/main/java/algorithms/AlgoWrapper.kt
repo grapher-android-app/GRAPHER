@@ -12,11 +12,11 @@ import model.Edge
 import model.Node
 import java.util.concurrent.FutureTask
 
-abstract class AlgoWrapper<Result>(val activity: GraphActivity, val algorithm : Algorithm<Node, Edge<Node>, Result?>)
+abstract class AlgoWrapper<Result>(private val activity: GraphActivity, val algorithm : Algorithm<Node, Edge<Node>, Result?>)
     : FutureTask<Result>(algorithm), IProgressListener{
 
     private lateinit var dialog: AlertDialog
-    var progressbar: ProgressBar
+    private var progressbar: ProgressBar
     init {
         setUpProgressDialog()
         algorithm.progressListener = this

@@ -1,6 +1,5 @@
 package com.example.grapher
 
-import algorithms.AlgoWrapper
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -15,10 +14,8 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import model.Node
-import org.jgrapht.Graph
 import util.GraphExporter
 import java.lang.Exception
-import java.lang.Math.sqrt
 import java.util.*
 
 /** AppCompatActivity replaces Activity in this library */
@@ -42,8 +39,6 @@ class GraphActivity : AppCompatActivity() {
         acceleration = 10f
         currentAcceleration = SensorManager.GRAVITY_EARTH
         lastAcceleration = SensorManager.GRAVITY_EARTH
-
-
 
         setContentView(R.layout.activity_graph)
         Node.resetCounter()
@@ -89,7 +84,7 @@ class GraphActivity : AppCompatActivity() {
     }
 
     //Based on  https://www.tutorialspoint.com/how-to-detect-shake-events-in-kotlin (read: 2/6/21)
-    val sensorListener: SensorEventListener = object : SensorEventListener {
+    private val sensorListener: SensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
             val x = event.values[0]
             val y = event.values[1]
@@ -116,8 +111,6 @@ class GraphActivity : AppCompatActivity() {
         super.onPause()
     }
 
-
-
     /**
         Inflates the menu with algorithms and listens for the user to click items in it.
         When user clicks, the algorithm will run.
@@ -126,7 +119,6 @@ class GraphActivity : AppCompatActivity() {
     private fun showPopUp(view: View){
         val popMenu = PopupMenu(this, view)
         popMenu.inflate(R.menu.algorithm_menu)
-
 
         popMenu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -194,7 +186,7 @@ class GraphActivity : AppCompatActivity() {
                 }
 
                 R.id.claws ->{
-                   val claw = graphView.ClawInsp()
+                   val claw = graphView.clawInsp()
                     if(claw)  shortToast("Graph has a claw")
                     else{
                         shortToast("Graph is claw free")
@@ -267,5 +259,4 @@ class GraphActivity : AppCompatActivity() {
         //sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody)
         startActivity(Intent.createChooser(sharingIntent, "Share graph with"))
     }
-
 }

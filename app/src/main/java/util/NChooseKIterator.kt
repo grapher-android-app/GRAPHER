@@ -1,13 +1,13 @@
 package util
 
+import model.PermutationIterator
 import java.math.BigInteger
 import java.util.*
 
-class NChooseKIterator<T>(elts: Collection<T>, k: Int) : MutableIterator<Collection<T>?> {
+class NChooseKIterator<T>(elts: Collection<T>, private val k: Int) : MutableIterator<Collection<T>?> {
     private val elements: ArrayList<T>
     private val characteristic: BooleanArray
-    private val k: Int
-    private val n: Int
+    private val n: Int = elts.size
     private var hasnext = true
     override fun hasNext(): Boolean {
         // if all the true's are in the k last positions, there are no next!
@@ -87,8 +87,6 @@ class NChooseKIterator<T>(elts: Collection<T>, k: Int) : MutableIterator<Collect
     }
 
     init {
-        n = elts.size
-        this.k = k
         require(n >= this.k) {
             ("n choose k demands to have n >= k, you had n="
                     + elts.size + ", k=" + k)

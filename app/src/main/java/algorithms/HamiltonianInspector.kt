@@ -4,7 +4,7 @@ import org.jgrapht.GraphPath
 import org.jgrapht.alg.connectivity.ConnectivityInspector
 import org.jgrapht.graph.GraphWalk
 import org.jgrapht.graph.SimpleGraph
-import util.PermutationIterator
+import model.PermutationIterator
 import util.PowersetIterator
 import java.util.*
 import kotlin.collections.HashMap

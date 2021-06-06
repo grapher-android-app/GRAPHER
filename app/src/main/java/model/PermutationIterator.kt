@@ -1,4 +1,4 @@
-package util
+package model
 
 import java.math.BigInteger
 import java.util.*
@@ -42,7 +42,7 @@ import java.util.*
  * in an ArrayList.
  */
 class PermutationIterator<T>(elements: Collection<T>?) : MutableIterator<Collection<T>?> {
-    private val elems: ArrayList<T>
+    private val elems: ArrayList<T> = ArrayList(elements)
     private val currentPermutation: IntArray
 
     // To indicate whether we have delivered the first permutation (and are
@@ -58,7 +58,7 @@ class PermutationIterator<T>(elements: Collection<T>?) : MutableIterator<Collect
         for (i in currentPermutation.indices.reversed()) {
             currentPermutation[i] = ((currentPermutation[i] + 1)
                     % possibleElementsAtIndex)
-            // When we have exchausted all possible elements at this position we
+            // When we have exhausted all possible elements at this position we
             // are done.
             if (currentPermutation[i] != 0) {
                 break
@@ -83,7 +83,7 @@ class PermutationIterator<T>(elements: Collection<T>?) : MutableIterator<Collect
             }
         }
         // Only false if we have delivered the first permutation at least once.
-        return false || !deliveredFirstOnce
+        return !deliveredFirstOnce
     }
 
     override fun next(): ArrayList<T> {
@@ -129,7 +129,6 @@ class PermutationIterator<T>(elements: Collection<T>?) : MutableIterator<Collect
     }
 
     init {
-        elems = ArrayList(elements)
         currentPermutation = IntArray(elems.size)
     }
 }

@@ -31,7 +31,7 @@ class SpringLayout(private var graph : SimpleGraph<Node, Edge<Node>>) {
 
     private var layout : SimpleGraph<SpringNode, Edge<SpringNode>> = SimpleGraph(SpringSupplier(), Supplier{ Edge<SpringNode>() }, false)
 
-    var nodeToComponent = HashMap<Node, Int>()
+    private var nodeToComponent = HashMap<Node, Int>()
 
     private val fromGraphToLayout = HashMap<Geometric, SpringNode>()
     private val fromLayoutToGraph = HashMap<SpringNode, Geometric>()

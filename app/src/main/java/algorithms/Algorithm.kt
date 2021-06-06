@@ -52,7 +52,6 @@ abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?): Callable<
         return true
     }
 
-
     /**
      * Increases current progress, returns true if current progress has reached
      * its goal.
@@ -70,8 +69,6 @@ abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?): Callable<
         return false
     }
 
-
-
     /** Notifies the progress listener of the progress */
     fun progress(percent : Float) {
         if(progressListener != null){
@@ -82,7 +79,6 @@ abstract class Algorithm<V, E, Return>(val graph: SimpleGraph<V, E>?): Callable<
             }
         }
     }
-
 
     /**
      * Notifies the progress listener of the current progress (reached check

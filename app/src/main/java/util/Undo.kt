@@ -95,13 +95,12 @@ class Undo(var graph : SimpleGraph<Node, Edge<Node>>) {
         return graph.removeEdge(v, u)
     }
 
-    fun addHistory(node : Node, add : Boolean) {
+    private fun addHistory(node : Node, add : Boolean) {
         hasChanged = true
         history.push(History(node, add))
     }
 
-
-    fun addHistory(v : Node, u : Node, add : Boolean) {
+    private fun addHistory(v : Node, u : Node, add : Boolean) {
         hasChanged = true
         history.push(History(v, u, add))
     }
