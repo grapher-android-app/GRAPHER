@@ -2,12 +2,12 @@
 
 Welcome to GRAPHER, the graph drawing Android app!
 
-# Description
+## Description
 
 This is an Android app for graph drawing and editing, and comes with several built-in algorithms
 that you can run on your graphs. You can share them and add them to clipboard in Metapost format.
 
-# Table of Contents
+## Table of Contents
 
 * Installation
 * Origin
@@ -17,12 +17,12 @@ that you can run on your graphs. You can share them and add them to clipboard in
 * Where will the app go next?
 * Licence
 
-# Installation
+## Installation
 To contribute or alter the project you can fork the project by using Git. The project is built
 using Gradle, so any modern IDE will easily automatically build it for you. We used Android Studio,
 which we recommend for easy testing and multiple way to view the project structure.
 
-# Origin
+## Origin
 The Android app for graph drawing and editing known as Grapher was designed and developed by
 Algoritmegruppen at UiB in the period of 2012-2015. After some time without maintenance the app
 became outdated and lost functionality due to changes in the ever evolving world of Android.
@@ -31,7 +31,7 @@ That's why the app was picked up again as a INF219 project to restore the lost
 functionality and make it compatible with new, modern Android devices. This is the home to the
 new and improved version, made clear by the now capitalized name.
 
-# Usage
+## Usage
 
 The graph manipulation is done using two modes: Node and Edge. Switching between them is done by
 simply flipping the switch on the navigation bar located at the bottom of the screen. You know which
@@ -72,7 +72,7 @@ mode you are currently in by looking at the text next to the switch which will e
     result in the graph's nodes spacing themselves out evenly. This will result in the graph looking
     like the most simple version of itself.
 
-# Changes from the original app
+## Changes from the original app
 
 * The app has been rewritten from Java into Kotlin
 * Implementation of the external graph library JGraphT was changed to work with the newer version
@@ -80,7 +80,7 @@ mode you are currently in by looking at the text next to the switch which will e
 * There is now a navigation bar that contains all actions you can do that does not directly
 relate to drawing or moving the graph manually.
     
-# Missing features from the old app
+## Missing features from the old app
 
 The original app had some more features that we sadly have had the chance to adapt yet due to the
 time constraints on the project. The functionality that is lacking but can easily be implemented
@@ -93,7 +93,7 @@ by having the time to translate it:
 As specified earlier, these features can easily be reimplemented by taking the time to translate
 them from the original code.
 
-# Where will the app go next?
+## Where will the app go next?
 
 The app still has quite a few shortcomings even when looking away from the missing features. Some
 ideas for future functionality that would be great quality of life features would be:
@@ -112,11 +112,11 @@ drastically:
 Overall, the app is currently a great tool for representation and manipulation of graphs but can
 be improved even more in the future.
 
-# Credits
+## Credits
 The original application and its authors are to credit for the main bulk of features that we simply
 had to translate, and for outlining how the app would function in the first place.
 Here is the link to the original project:
 https://github.com/pgdr/Grapher
 
-# Licence
+## Licence
 The project is released as GPLv3
