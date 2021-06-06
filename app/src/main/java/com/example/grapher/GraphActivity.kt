@@ -142,6 +142,7 @@ class GraphActivity : AppCompatActivity() {
                 }
                 R.id.power -> {
                     graphView.constructPower()
+                    shortToast("Power graph has been constructed")
                 }
                 R.id.hamiltonian_path -> {
                     graphView.showHamiltonianPath(this)
@@ -167,10 +168,6 @@ class GraphActivity : AppCompatActivity() {
                         flow == 0 -> shortToast("Not connected")
                         else -> shortToast("Max flow $flow")
                     }
-                }
-                R.id.power -> {
-                    graphView.constructPower()
-                    shortToast("Power graph has been constructed")
                 }
                 R.id.bipartition -> {
                     val bip = graphView.isBipartite()
